@@ -1,0 +1,6 @@
+main: net.samagames.WastelandMain
+name: Wasteland
+version: 1.0
+author: Werter
+load: POSTWORLD
+depend: [SamaGamesAPI]
