@@ -2,8 +2,6 @@ package net.samagames.Listerner;
 
 import net.samagames.Wasteland;
 import net.samagames.WastelandItem;
-import net.samagames.api.games.Game;
-import net.samagames.api.games.GamePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,13 +25,10 @@ public class PlayerEvent implements Listener {
             Player player = event.getPlayer();
             ItemStack item = event.getItem();
             if(item.equals(WastelandItem.JOIN_TEAM_BLUE.getItemStack())){
-                //TODO
+                wasteland.setTeamBlue(player);
             }
             if(item.equals(WastelandItem.JOIN_TEAM_RED.getItemStack())) {
-                //TODO
-            }
-            if(item.equals(WastelandItem.LEAVE.getItemStack())) {
-                //TODO
+                wasteland.setTeamRed(player);
             }
         }
     }
