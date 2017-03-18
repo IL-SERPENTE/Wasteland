@@ -1,12 +1,15 @@
 package net.samagames;
 
+import com.google.gson.JsonObject;
 import net.samagames.api.SamaGamesAPI;
 import net.samagames.api.games.Game;
 import net.samagames.api.games.GamePlayer;
+import net.samagames.tools.LocationUtils;
 import net.samagames.tools.chat.ActionBarAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -22,6 +25,7 @@ public class Wasteland extends Game<GamePlayer> {
     private ArrayList<Player> teamBlue;
     private Wasteland instance;
     private WastelandMain wastelandMain;
+    private Location spawn;
 
     public Wasteland(String gameCodeName, String gameName, String gameDescription, Class gamePlayerClass, WastelandMain main) {
         super(gameCodeName, gameName, gameDescription, gamePlayerClass);
@@ -29,11 +33,17 @@ public class Wasteland extends Game<GamePlayer> {
         this.teamBlue = new ArrayList<>();
         this.teamRed = new ArrayList<>();
         this.wastelandMain = main;
+        JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
+        Location loc = LocationUtils.str2loc(object.get("world_name").getAsString()+  ", "+object.get("spawn").getAsString());
+
+        this.spawn = loc;
+
     }
 
     @Override
     public void handleLogin(Player player){
         super.handleLogin(player);
+        player.teleport(getSpawn());
         player.getInventory().clear();
         player.setHealth(player.getMaxHealth());
         player.setSaturation(1);
@@ -49,7 +59,6 @@ public class Wasteland extends Game<GamePlayer> {
     @Override
     public void startGame() {
         super.startGame();
-        isStarted = true;
         new BukkitRunnable() {
             int cooldown = 60;
             @Override
@@ -57,12 +66,21 @@ public class Wasteland extends Game<GamePlayer> {
                 if (cooldown == 60 || cooldown == 30 || cooldown <= 10)
                     if (cooldown == 0){
                         SamaGamesAPI.get().getGameManager().getCoherenceMachine().getMessageManager().writeGameStart();
-                        for(Player player : Bukkit.getOnlinePlayers())
-                            if(!teamBlue.contains(player) && !teamRed.contains(player))
-                                if(teamBlue.size() >= teamRed.size())
+                        JsonObject jsonObject = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
+                        for(Player player : Bukkit.getOnlinePlayers()) {
+                            player.getInventory().clear();
+                            if (!teamBlue.contains(player) && !teamRed.contains(player))
+                                if (teamBlue.size() >= teamRed.size())
                                     setTeamRed(player);
                                 else
                                     setTeamBlue(player);
+                                if(teamRed.contains(player))
+                                    player.teleport(LocationUtils.str2loc(jsonObject.get("spawn_red").getAsString()));
+                                else
+                                    player.teleport(LocationUtils.str2loc(jsonObject.get("spawn_blue").getAsString()));
+
+                        }
+                        isStarted = true;
                         this.cancel();
                     }else
                     SamaGamesAPI.get().getGameManager().getCoherenceMachine().getMessageManager().writeGameStartIn(cooldown);
@@ -99,6 +117,9 @@ public class Wasteland extends Game<GamePlayer> {
             ActionBarAPI.sendPermanentMessage(player,ChatColor.GRAY + "Vous êtes dans l'équipe" + ChatColor.YELLOW + " : " + ChatColor.RED + "rouge");
         }else
             player.sendMessage(ChatColor.RED + "Il y a trop de joueur dans cette équipe");
+    }
+    public Location getSpawn(){
+        return this.spawn;
     }
 
     public Wasteland getInstance(){

@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class WastelandMain extends JavaPlugin {
     @Override
     public void onEnable(){
-        Wasteland wasteland=  new Wasteland("gameCode", "Wasteland", "by UnJoueur", GamePlayer.class);
+        Wasteland wasteland=  new Wasteland("gameCode", "Wasteland", "by UnJoueur", GamePlayer.class, this);
         this.getServer().getPluginManager().registerEvents(new CancelledEvent(wasteland.getInstance()), this);
         this.getServer().getPluginManager().registerEvents(new PlayerEvent(wasteland.getInstance()),this);
         SamaGamesAPI.get().getGameManager().setFreeMode(true);
