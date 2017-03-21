@@ -3,8 +3,8 @@ package net.samagames;
 import com.google.gson.JsonObject;
 import net.samagames.api.SamaGamesAPI;
 import net.samagames.api.games.Game;
-import net.samagames.api.games.GamePlayer;
 import net.samagames.player.Team;
+import net.samagames.player.WastelandPlayer;
 import net.samagames.tools.Area;
 import net.samagames.tools.LocationUtils;
 import net.samagames.tools.chat.ActionBarAPI;
@@ -13,13 +13,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by werter on 01.03.2017.
  */
-public class Wasteland extends Game<GamePlayer> {
+public class Wasteland extends Game<WastelandPlayer> {
 
     private boolean isStarted = false;
     private Team teamRed;
