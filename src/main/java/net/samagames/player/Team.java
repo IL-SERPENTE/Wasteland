@@ -9,8 +9,10 @@ import java.util.List;
  * Created by werter on 21.03.2017.
  */
 public class Team {
-    TeamColor teamColor;
-    List<Player> member;
+    private TeamColor teamColor;
+    private List<Player> member;
+
+
     public Team(TeamColor color){
         this.teamColor = color;
         this.member = new ArrayList<>();
