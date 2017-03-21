@@ -4,16 +4,16 @@ import com.google.gson.JsonObject;
 import net.samagames.api.SamaGamesAPI;
 import net.samagames.api.games.Game;
 import net.samagames.api.games.GamePlayer;
+import net.samagames.tools.Area;
 import net.samagames.tools.LocationUtils;
 import net.samagames.tools.chat.ActionBarAPI;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by werter on 01.03.2017.
@@ -34,7 +34,7 @@ public class Wasteland extends Game<GamePlayer> {
         this.teamRed = new ArrayList<>();
         this.wastelandMain = main;
         JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
-        Location loc = LocationUtils.str2loc(object.get("world_name").getAsString()+  ", "+object.get("spawn").getAsString());
+        Location loc = LocationUtils.str2loc(object.get("spawn").getAsString());
 
         this.spawn = loc;
 
@@ -46,7 +46,7 @@ public class Wasteland extends Game<GamePlayer> {
         player.teleport(getSpawn());
         player.getInventory().clear();
         player.setHealth(player.getMaxHealth());
-        player.setSaturation(1);
+        player.setSaturation(20);
         player.setGameMode(GameMode.ADVENTURE);
         for(WastelandItem item : WastelandItem.values())
             if (item.isStarterItem()){
@@ -78,15 +78,28 @@ public class Wasteland extends Game<GamePlayer> {
                                     player.teleport(LocationUtils.str2loc(jsonObject.get("spawn_red").getAsString()));
                                 else
                                     player.teleport(LocationUtils.str2loc(jsonObject.get("spawn_blue").getAsString()));
-
                         }
                         isStarted = true;
+                        start();
                         this.cancel();
                     }else
                     SamaGamesAPI.get().getGameManager().getCoherenceMachine().getMessageManager().writeGameStartIn(cooldown);
                 cooldown--;
             }
         }.runTaskTimer(getInstance().getMain(),20 ,20);
+    }
+
+    public void start(){
+        JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
+        Area harvestArea = new Area(LocationUtils.str2loc(object.get("harvest_area_first").getAsString()),LocationUtils.str2loc(object.get("harvest_area_second").getAsString()));
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                int randomX = ThreadLocalRandom.current().nextInt(harvestArea.getMin().getBlockX(),harvestArea.getMax().getBlockX() + 1);
+                int randomZ =ThreadLocalRandom.current().nextInt(harvestArea.getMin().getBlockZ(),harvestArea.getMax().getBlockZ() + 1);
+                Bukkit.getWorld("world").dropItem(new Location(Bukkit.getWorld("world"),randomX,harvestArea.getMax().getY(),randomZ), new ItemStack(Material.WHEAT));
+            }
+        }.runTaskTimer(getMain(),20,6);
     }
 
     public boolean isStarted(){
