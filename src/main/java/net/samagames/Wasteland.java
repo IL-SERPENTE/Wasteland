@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import net.samagames.api.SamaGamesAPI;
 import net.samagames.api.games.Game;
 import net.samagames.api.games.GamePlayer;
+import net.samagames.player.Team;
 import net.samagames.tools.Area;
 import net.samagames.tools.LocationUtils;
 import net.samagames.tools.chat.ActionBarAPI;
@@ -21,18 +22,18 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Wasteland extends Game<GamePlayer> {
 
     private boolean isStarted = false;
-    private ArrayList<Player> teamRed;
-    private ArrayList<Player> teamBlue;
+    private Team teamRed;
+    private Team teamBlue;
     private Wasteland instance;
     private WastelandMain wastelandMain;
     private Location spawn;
 
-    public Wasteland(String gameCodeName, String gameName, String gameDescription, Class gamePlayerClass, WastelandMain main) {
+    public Wasteland(String gameCodeName, String gameName, String gameDescription, Class gamePlayerClass, WastelandMain main, Team blue, Team red) {
         super(gameCodeName, gameName, gameDescription, gamePlayerClass);
         this.instance = this;
-        this.teamBlue = new ArrayList<>();
-        this.teamRed = new ArrayList<>();
         this.wastelandMain = main;
+        this.teamBlue = blue;
+        this.teamRed = red;
         JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
         Location loc = LocationUtils.str2loc(object.get("spawn").getAsString());
 
@@ -70,7 +71,7 @@ public class Wasteland extends Game<GamePlayer> {
                         for(Player player : Bukkit.getOnlinePlayers()) {
                             player.getInventory().clear();
                             if (!teamBlue.contains(player) && !teamRed.contains(player))
-                                if (teamBlue.size() >= teamRed.size())
+                                if (teamBlue.getMember().size() >= teamRed.getMember().size())
                                     setTeamRed(player);
                                 else
                                     setTeamBlue(player);
@@ -111,9 +112,9 @@ public class Wasteland extends Game<GamePlayer> {
             player.sendMessage(ChatColor.YELLOW + "Vous êtes déjà dans l'équipe" +ChatColor.BLUE + "bleu");
             return;
         }
-        if(teamRed.size() >= teamBlue.size() && teamBlue.size() - teamRed.size() != 2){
-            if(teamRed.contains(player)) teamRed.remove(player);
-            teamBlue.add(player);
+        if(teamRed.getMember().size() >= teamBlue.getMember().size() && teamBlue.getMember().size() - teamRed.getMember().size() != 2){
+            if(teamRed.contains(player)) teamRed.removePlayer(player);
+            teamBlue.addPlayer(player);
             ActionBarAPI.sendPermanentMessage(player,ChatColor.GRAY + "Vous êtes dans l'équipe" + ChatColor.YELLOW + " : " + ChatColor.BLUE + "bleue");
         }else
             player.sendMessage(ChatColor.RED + "Il y a trop de joueur dans cette équipe");
@@ -124,9 +125,9 @@ public class Wasteland extends Game<GamePlayer> {
             player.sendMessage(ChatColor.YELLOW + "Vous êtes déjà dans l'équipe" +ChatColor.RED + "rouge");
             return;
         }
-        if(teamRed.size() <= teamBlue.size() && teamRed.size() - teamBlue.size() != 2){
-            if(teamBlue.contains(player)) teamBlue.remove(player);
-            teamRed.add(player);
+        if(teamRed.getMember().size() <= teamBlue.getMember().size() && teamRed.getMember().size() - teamBlue.getMember().size() != 2){
+            if(teamBlue.contains(player)) teamBlue.removePlayer(player);
+            teamRed.addPlayer(player);
             ActionBarAPI.sendPermanentMessage(player,ChatColor.GRAY + "Vous êtes dans l'équipe" + ChatColor.YELLOW + " : " + ChatColor.RED + "rouge");
         }else
             player.sendMessage(ChatColor.RED + "Il y a trop de joueur dans cette équipe");
