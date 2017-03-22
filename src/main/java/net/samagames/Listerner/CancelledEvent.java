@@ -3,6 +3,7 @@ package net.samagames.Listerner;
 import net.samagames.Wasteland;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -19,6 +20,12 @@ public class CancelledEvent implements Listener {
         this.wasteland = wasteland;
     }
 
+
+    @EventHandler
+    public void onCreatureSpawn(CreatureSpawnEvent event){
+        if(event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CUSTOM))
+            event.setCancelled(true);
+    }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event){
