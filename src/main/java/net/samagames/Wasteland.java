@@ -3,7 +3,9 @@ package net.samagames;
 import com.google.gson.JsonObject;
 import net.samagames.api.SamaGamesAPI;
 import net.samagames.api.games.Game;
+import net.samagames.entity.Turret;
 import net.samagames.player.Team;
+import net.samagames.player.TeamColor;
 import net.samagames.player.WastelandPlayer;
 import net.samagames.tools.Area;
 import net.samagames.tools.LocationUtils;
@@ -13,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -20,6 +23,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class Wasteland extends Game<WastelandPlayer> {
 
+    private HashMap<Player,WastelandPlayer> registeredPlayer;
     private boolean isStarted = false;
     private Team teamRed;
     private Team teamBlue;
@@ -27,17 +31,16 @@ public class Wasteland extends Game<WastelandPlayer> {
     private WastelandMain wastelandMain;
     private Location spawn;
 
-    public Wasteland(String gameCodeName, String gameName, String gameDescription, Class gamePlayerClass, WastelandMain main, Team blue, Team red) {
+    public Wasteland(String gameCodeName, String gameName, String gameDescription, Class gamePlayerClass, WastelandMain main) {
         super(gameCodeName, gameName, gameDescription, gamePlayerClass);
         this.instance = this;
         this.wastelandMain = main;
-        this.teamBlue = blue;
-        this.teamRed = red;
+        this.teamBlue = new Team(getInstance(), TeamColor.BLUE);
+        this.teamRed = new Team(getInstance(),TeamColor.RED);
         JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
         Location loc = LocationUtils.str2loc(object.get("spawn").getAsString());
-
         this.spawn = loc;
-
+        registeredPlayer = new HashMap<Player,WastelandPlayer>();
     }
 
     @Override
@@ -48,6 +51,7 @@ public class Wasteland extends Game<WastelandPlayer> {
         player.setHealth(player.getMaxHealth());
         player.setSaturation(20);
         player.setGameMode(GameMode.ADVENTURE);
+        registerPlayer(player);
         for(WastelandItem item : WastelandItem.values())
             if (item.isStarterItem()){
                 player.getInventory().setItem(item.getSlot(),item.getItemStack());
@@ -60,7 +64,7 @@ public class Wasteland extends Game<WastelandPlayer> {
     public void startGame() {
         super.startGame();
         new BukkitRunnable() {
-            int cooldown = 60;
+            int cooldown = 10;
             @Override
             public void run() {
                 if (cooldown == 60 || cooldown == 30 || cooldown <= 10)
@@ -79,6 +83,7 @@ public class Wasteland extends Game<WastelandPlayer> {
                                 else
                                     player.teleport(LocationUtils.str2loc(jsonObject.get("spawn_blue").getAsString()));
                         }
+
                         isStarted = true;
                         start();
                         this.cancel();
@@ -90,6 +95,9 @@ public class Wasteland extends Game<WastelandPlayer> {
     }
 
     public void start(){
+        Turret turret = new Turret(getInstance(),getTeamBlue(),new Location(Bukkit.getWorld("world"),-126,123,373),5);
+        turret.init();
+        turret.enable();
         JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
         Area harvestArea = new Area(LocationUtils.str2loc(object.get("harvest_area_first").getAsString()),LocationUtils.str2loc(object.get("harvest_area_second").getAsString()));
         new BukkitRunnable(){
@@ -102,13 +110,21 @@ public class Wasteland extends Game<WastelandPlayer> {
         }.runTaskTimer(getMain(),20,6);
     }
 
+    public Team getTeamRed (){
+        return  this.teamRed;
+    }
+
+    public Team getTeamBlue() {
+        return teamBlue;
+    }
+
     public boolean isStarted(){
         return this.isStarted;
     }
 
     public void setTeamBlue(Player player){
         if(teamBlue.contains(player)){
-            player.sendMessage(ChatColor.YELLOW + "Vous êtes déjà dans l'équipe" +ChatColor.BLUE + "bleu");
+            player.sendMessage(ChatColor.YELLOW + "Vous êtes déjà dans l'équipe" +ChatColor.BLUE + " bleu");
             return;
         }
         if(teamRed.getMember().size() >= teamBlue.getMember().size() && teamBlue.getMember().size() - teamRed.getMember().size() != 2){
@@ -121,7 +137,7 @@ public class Wasteland extends Game<WastelandPlayer> {
 
     public void setTeamRed(Player player) {
         if(teamRed.contains(player)){
-            player.sendMessage(ChatColor.YELLOW + "Vous êtes déjà dans l'équipe" +ChatColor.RED + "rouge");
+            player.sendMessage(ChatColor.YELLOW + "Vous êtes déjà dans l'équipe" +ChatColor.RED + " rouge");
             return;
         }
         if(teamRed.getMember().size() <= teamBlue.getMember().size() && teamRed.getMember().size() - teamBlue.getMember().size() != 2){
@@ -131,6 +147,18 @@ public class Wasteland extends Game<WastelandPlayer> {
         }else
             player.sendMessage(ChatColor.RED + "Il y a trop de joueur dans cette équipe");
     }
+    public WastelandPlayer getWastelandPlayer(Player player){
+        return this.registeredPlayer.get(player);
+    }
+
+    public HashMap<Player, WastelandPlayer> getRegisteredPlayer() {
+        return registeredPlayer;
+    }
+
+    public void registerPlayer(Player player){
+        registeredPlayer.put(player, new WastelandPlayer(player));
+    }
+
     public Location getSpawn(){
         return this.spawn;
     }
