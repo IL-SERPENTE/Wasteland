@@ -1,6 +1,8 @@
 package net.samagames.player;
 
+import net.samagames.Wasteland;
 import net.samagames.entity.Turret;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -10,15 +12,21 @@ import java.util.List;
  * Created by werter on 21.03.2017.
  */
 public class Team {
+    private Wasteland wasteland;
     private TeamColor teamColor;
     private List<Player> member;
     private Turret[] turrets;
 
-    public Team(TeamColor color){
+    public Team(Wasteland wasteland,TeamColor color){
+        this.wasteland = wasteland;
         this.teamColor = color;
         this.member = new ArrayList<>();
     }
 
+
+    public void setTurrets (Turret... turrets){
+        this.turrets = turrets;
+    }
 
     public Turret[] getTurrets() {
         return turrets;
@@ -30,7 +38,8 @@ public class Team {
 
     public void addPlayer(Player player){
         this.member.add(player);
-        new WastelandPlayer(player).setTeam(this);
+        player.setPlayerListName(this.getTeamColor().getChatColor() + player.getName());
+        wasteland.getWastelandPlayer(player).setTeam(this);
     }
 
     public void removePlayer(Player player){

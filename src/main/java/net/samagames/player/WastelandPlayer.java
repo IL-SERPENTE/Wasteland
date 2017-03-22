@@ -28,7 +28,7 @@ public class WastelandPlayer extends GamePlayer {
     }
 
     public boolean hasTeam(){
-        return team != null;
+       return team != null;
     }
 
     public boolean isInTeam(TeamColor color){
