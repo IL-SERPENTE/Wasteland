@@ -14,8 +14,8 @@ import java.util.List;
 public enum WastelandItem {
     LEAVE(SamaGamesAPI.get().getGameManager().getCoherenceMachine().getLeaveItem(),"Leave",8 ,true,"leave"),
     KIT_SELECTOR(new ItemStack(Material.ENDER_CHEST), "kit",4 ,true ,"kit"),
-    JOIN_TEAM_BLUE(new ItemStack(Material.BANNER,1, (byte) 4),"Blue",0 ,true,"Blue"),
-    JOIN_TEAM_RED(new ItemStack(Material.BANNER,1,(byte)1),"Red",1,true,"Red");
+    JOIN_TEAM_BLUE(new ItemStack(Material.BANNER,1, (byte) 4),"Bleu",0 ,true,"Bleu"),
+    JOIN_TEAM_RED(new ItemStack(Material.BANNER,1,(byte)1),"Rouge",1,true,"Rouge");
 
 
     private ItemStack itemStack;
