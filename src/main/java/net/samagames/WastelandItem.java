@@ -40,6 +40,7 @@ public enum WastelandItem {
         this.itemStack = itemStack;
     }
 
+
     public boolean isStarterItem() {
         return starterItem;
     }
