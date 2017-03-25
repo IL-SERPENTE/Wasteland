@@ -19,10 +19,11 @@ public class WastelandMain extends JavaPlugin {
     @Override
     public void onEnable(){
         wasteland =  new Wasteland("gameCode", "Wasteland", "by Werter", GamePlayer.class, this);
+        SamaGamesAPI.get().getGameManager().registerGame(wasteland);
         this.getServer().getPluginManager().registerEvents(new CancelledEvent(wasteland.getInstance()), this);
         this.getServer().getPluginManager().registerEvents(new PlayerEvent(wasteland.getInstance()),this);
-        SamaGamesAPI.get().getGameManager().setFreeMode(true);
-        SamaGamesAPI.get().getGameManager().registerGame(wasteland);
+        this.getServer().getPluginManager().registerEvents(new Turret(),this);
+
     }
 
     @Override
