@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 public class WastelandPlayer extends GamePlayer {
     private Player player;
     private Team team;
+    private int wheat;
 
     public WastelandPlayer(Player player){
         super(player);
@@ -21,6 +22,10 @@ public class WastelandPlayer extends GamePlayer {
 
     public Team getTeam() {
         return team;
+    }
+
+    public int getWheat(){
+        return this.wheat;
     }
 
     public void setTeam(Team team) {
@@ -38,4 +43,13 @@ public class WastelandPlayer extends GamePlayer {
                 isInTeam = true;
         return isInTeam;
     }
+
+    public void setWheat(int wheat) {
+        this.wheat = wheat;
+    }
+
+    public void addWheat(int number){
+        this.wheat = wheat + number;
+    }
+
 }

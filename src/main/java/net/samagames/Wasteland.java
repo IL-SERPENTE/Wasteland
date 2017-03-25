@@ -35,9 +35,9 @@ public class Wasteland extends Game<WastelandPlayer> {
         super(gameCodeName, gameName, gameDescription, gamePlayerClass);
         this.instance = this;
         this.wastelandMain = main;
-        this.teamBlue = new Team(getInstance(), TeamColor.BLUE);
-        this.teamRed = new Team(getInstance(),TeamColor.RED);
         JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
+        this.teamBlue = new Team(getInstance(), TeamColor.BLUE,LocationUtils.str2loc(object.get("chest_blue").getAsString()));
+        this.teamRed = new Team(getInstance(),TeamColor.RED,LocationUtils.str2loc(object.get("chest_red").getAsString()));
         Location loc = LocationUtils.str2loc(object.get("spawn").getAsString());
         this.spawn = loc;
         registeredPlayer = new HashMap<Player,WastelandPlayer>();
@@ -95,10 +95,11 @@ public class Wasteland extends Game<WastelandPlayer> {
     }
 
     public void start(){
-        Turret turret = new Turret(getInstance(),getTeamBlue(),new Location(Bukkit.getWorld("world"),-126,123,373),5);
+
+        JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
+        Turret turret = new Turret(getInstance(),getTeamBlue(),LocationUtils.str2loc(object.get("turret_north_west").getAsString()),50);
         turret.init();
         turret.enable();
-        JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
         Area harvestArea = new Area(LocationUtils.str2loc(object.get("harvest_area_first").getAsString()),LocationUtils.str2loc(object.get("harvest_area_second").getAsString()));
         new BukkitRunnable(){
             @Override
