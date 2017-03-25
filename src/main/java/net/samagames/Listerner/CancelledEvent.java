@@ -25,7 +25,7 @@ public class CancelledEvent implements Listener {
 
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event){
-        if(event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CUSTOM))
+        if(!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CUSTOM))
             event.setCancelled(true);
     }
 
