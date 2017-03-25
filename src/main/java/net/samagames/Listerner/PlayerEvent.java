@@ -43,9 +43,17 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event){
+        Player player = event.getPlayer();
+        WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
+        if(event.hasBlock())
+            if(wastelandPlayer.hasTeam())
+             if(wastelandPlayer.getTeam().getChestLocation().equals(event.getClickedBlock().getLocation())) {
+                wastelandPlayer.getTeam().addWheat(wastelandPlayer.getWheat());
+                wastelandPlayer.setWheat(0);
+                event.setCancelled(true);
+            }
         if(!wasteland.isStarted() && event.hasItem()){
             event.setCancelled(true);
-            Player player = event.getPlayer();
             ItemStack item = event.getItem();
             if(item.equals(WastelandItem.JOIN_TEAM_BLUE.getItemStack())){
                 wasteland.setTeamBlue(player);
