@@ -95,7 +95,8 @@ public class Wasteland extends Game<WastelandPlayer> {
     }
 
     public void start(){
-
+        teamBlue.initScoreBoard();
+        teamRed.initScoreBoard();
         JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
         Turret turret = new Turret(getInstance(),getTeamBlue(),LocationUtils.str2loc(object.get("turret_north_west").getAsString()),50);
         turret.init();

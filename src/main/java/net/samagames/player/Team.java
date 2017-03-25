@@ -2,6 +2,7 @@ package net.samagames.player;
 
 import net.samagames.Wasteland;
 import net.samagames.entity.Turret;
+import net.samagames.tools.scoreboards.ObjectiveSign;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -26,6 +27,29 @@ public class Team {
         this.spawn = spawn;
         this.chestLocation = chestLocation;
         this.member = new ArrayList<>();
+
+    }
+
+    public void updateScoreBoard(){
+        for(Player player : this.member){
+            WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
+            ObjectiveSign objectiveSign =wastelandPlayer.getScoreBoard();
+            objectiveSign.setLine(3, "Votre coffre contient: " + wastelandPlayer.getTeam().getWheat());
+            objectiveSign.updateLines();
+        }
+    }
+
+    public void initScoreBoard(){
+        for(Player player : this.member) {
+            ObjectiveSign scoreBoard = new ObjectiveSign(this.getTeamColor().name(),this.getTeamColor().getChatColor() + "Team " + this.getTeamColor().getName());
+            WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
+            wastelandPlayer.setScoreBoard(scoreBoard);
+            ObjectiveSign objectiveSign =wastelandPlayer.getScoreBoard();
+            objectiveSign.setLine(2, " ");
+            objectiveSign.setLine(1, "Vous avez: " + wastelandPlayer.getWheat() + " blés sur vous");
+            objectiveSign.setLine(3, "Votre coffre contient: " + wastelandPlayer.getTeam().getWheat());
+            objectiveSign.addReceiver(player);
+        }
     }
 
     public Location getSpawn() {
@@ -38,9 +62,15 @@ public class Team {
 
     public int getWheat(){return  this.wheat;}
 
-    public void setWheat(int wheat) { this.wheat = wheat;}
+    public void setWheat(int wheat) {
+        this.wheat = wheat;
+        updateScoreBoard();
+    }
 
-    public void addWheat(int wheat){this.wheat = +wheat + this.wheat;}
+    public void addWheat(int wheat){
+        this.wheat = +wheat + this.wheat;
+        updateScoreBoard();
+    }
 
     public void setTurrets (Turret... turrets){
         this.turrets = turrets;
