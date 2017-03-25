@@ -14,17 +14,22 @@ import java.util.List;
 public class Team {
 
     private int wheat;
-    private Location chestLocation;
+    private Location chestLocation,spawn;
     private Wasteland wasteland;
     private TeamColor teamColor;
     private List<Player> member;
     private Turret[] turrets;
 
-    public Team(Wasteland wasteland,TeamColor color, Location chestLocation){
+    public Team(Wasteland wasteland,TeamColor color,Location spawn ,Location chestLocation){
         this.wasteland = wasteland;
         this.teamColor = color;
+        this.spawn = spawn;
         this.chestLocation = chestLocation;
         this.member = new ArrayList<>();
+    }
+
+    public Location getSpawn() {
+        return spawn;
     }
 
     public Location getChestLocation() {

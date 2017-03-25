@@ -36,8 +36,8 @@ public class Wasteland extends Game<WastelandPlayer> {
         this.instance = this;
         this.wastelandMain = main;
         JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
-        this.teamBlue = new Team(getInstance(), TeamColor.BLUE,LocationUtils.str2loc(object.get("chest_blue").getAsString()));
-        this.teamRed = new Team(getInstance(),TeamColor.RED,LocationUtils.str2loc(object.get("chest_red").getAsString()));
+        this.teamBlue = new Team(getInstance(), TeamColor.BLUE,LocationUtils.str2loc(object.get("spawn_blue").getAsString()),LocationUtils.str2loc(object.get("chest_blue").getAsString()));
+        this.teamRed = new Team(getInstance(),TeamColor.RED,LocationUtils.str2loc(object.get("spawn_red").getAsString()),LocationUtils.str2loc(object.get("chest_red").getAsString()));
         Location loc = LocationUtils.str2loc(object.get("spawn").getAsString());
         this.spawn = loc;
         registeredPlayer = new HashMap<Player,WastelandPlayer>();
