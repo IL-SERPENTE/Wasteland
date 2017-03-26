@@ -6,6 +6,7 @@ import net.samagames.player.WastelandPlayer;
 import net.samagames.tools.chat.ActionBarAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,8 +43,12 @@ public class PlayerEvent implements Listener {
                     ItemStack itemStack = event.getItem().getItemStack();
                     itemStack.setAmount(wheat + amount - 50);
                     player.getWorld().dropItem(event.getItem().getLocation(), itemStack);
-                } else
+                    player.sendMessage("Vous ne pouvez plus rammaser de blés");
+                    player.playSound(player.getLocation(),Sound.ENTITY_PLAYER_LEVELUP,(float) 1 , (float) 1);
+                } else {
                     wastelandPlayer.addWheat(amount);
+                    player.playSound(player.getLocation(),Sound.ITEM_HOE_TILL,(float) 0.5,(float) 0.5);
+                }
             }
         }
     }
@@ -78,7 +83,7 @@ public class PlayerEvent implements Listener {
         if(event.hasBlock())
             if(wastelandPlayer.hasTeam()) {
                 if(wastelandPlayer.getTeam().getEnnemies().getChestLocation().equals(event.getClickedBlock().getLocation())){
-                    //TODO ADD COOLDOWN
+                    //TODO ADD COOLDOWN AND RANDOM
                     event.setCancelled(true);
                     if(wastelandPlayer.getTeam().getEnnemies().getWheat() < 16){
                         player.sendMessage("L'équipe adverse n'as pas assez de ressources pour être volé");
