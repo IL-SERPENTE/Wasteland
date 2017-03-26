@@ -15,6 +15,8 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Random;
+
 /**
  * Created by werter on 08.03.2017.
  */
@@ -50,7 +52,7 @@ public class PlayerEvent implements Listener {
     public void onPlayerRespawn(PlayerRespawnEvent event){
         Player player = event.getPlayer();
         WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
-        player.teleport(wastelandPlayer.getTeam().getSpawn());
+        event.setRespawnLocation(wastelandPlayer.getTeam().getSpawn());
     }
 
     @EventHandler
@@ -74,11 +76,30 @@ public class PlayerEvent implements Listener {
         Player player = event.getPlayer();
         WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
         if(event.hasBlock())
-            if(wastelandPlayer.hasTeam())
-             if(wastelandPlayer.getTeam().getChestLocation().equals(event.getClickedBlock().getLocation())) {
-                wastelandPlayer.getTeam().addWheat(wastelandPlayer.getWheat());
-                wastelandPlayer.setWheat(0);
-                event.setCancelled(true);
+            if(wastelandPlayer.hasTeam()) {
+                if(wastelandPlayer.getTeam().getEnnemies().getChestLocation().equals(event.getClickedBlock().getLocation())){
+                    //TODO ADD COOLDOWN
+                    event.setCancelled(true);
+                    if(wastelandPlayer.getTeam().getEnnemies().getWheat() < 16){
+                        player.sendMessage("L'équipe adverse n'as pas assez de ressources pour être volé");
+                        return;
+                    }
+                    if(wastelandPlayer.getWheat() == 50){
+                        player.sendMessage("Vous ne pouvez pas voler de ressource car vous êtes full");
+                        return;
+                    }
+                    int capacity = 50 - wastelandPlayer.getWheat();
+                    if(capacity > 15)
+                        capacity = 15;
+                    wastelandPlayer.getTeam().getEnnemies().removeWheat(capacity);
+                    wastelandPlayer.addWheat(capacity);
+                    player.sendMessage("Vous avez volé " + capacity + " blés");
+                }
+                if (wastelandPlayer.getTeam().getChestLocation().equals(event.getClickedBlock().getLocation())) {
+                    wastelandPlayer.getTeam().addWheat(wastelandPlayer.getWheat());
+                    wastelandPlayer.setWheat(0);
+                    event.setCancelled(true);
+                }
             }
         if(!wasteland.isStarted() && event.hasItem()){
             event.setCancelled(true);
