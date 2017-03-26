@@ -43,8 +43,6 @@ public class PlayerEvent implements Listener {
                     ItemStack itemStack = event.getItem().getItemStack();
                     itemStack.setAmount(wheat + amount - 50);
                     player.getWorld().dropItem(event.getItem().getLocation(), itemStack);
-                    player.sendMessage("Vous ne pouvez plus rammaser de blés");
-                    player.playSound(player.getLocation(),Sound.ENTITY_PLAYER_LEVELUP,(float) 1 , (float) 1);
                 } else {
                     wastelandPlayer.addWheat(amount);
                     player.playSound(player.getLocation(),Sound.ITEM_HOE_TILL,(float) 0.5,(float) 0.5);
