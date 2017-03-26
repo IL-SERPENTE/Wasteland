@@ -3,6 +3,7 @@ package net.samagames.player;
 import net.samagames.api.games.GamePlayer;
 import net.samagames.tools.chat.ActionBarAPI;
 import net.samagames.tools.scoreboards.ObjectiveSign;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 /**
@@ -64,11 +65,17 @@ public class WastelandPlayer extends GamePlayer {
     public void setWheat(int wheat) {
         this.wheat = wheat;
         updateScoreBoard();
+        player.setLevel(wheat);
+        if(wheat == 50){
+            player.sendMessage("Vous ne pouvez plus rammaser de blés");
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,(float) 1 , (float) 1);
+        }
     }
 
     public void addWheat(int number){
-        this.wheat = wheat + number;
+        setWheat(wheat + number);
         updateScoreBoard();
+
     }
 
 }
