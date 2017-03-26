@@ -30,6 +30,7 @@ public class Wasteland extends Game<WastelandPlayer> {
     private Wasteland instance;
     private WastelandMain wastelandMain;
     private Location spawn;
+    private BukkitRunnable timerRunnable;
 
     public Wasteland(String gameCodeName, String gameName, String gameDescription, Class gamePlayerClass, WastelandMain main) {
         super(gameCodeName, gameName, gameDescription, gamePlayerClass);
@@ -95,6 +96,7 @@ public class Wasteland extends Game<WastelandPlayer> {
     }
 
     public void start(){
+        timer();
         teamBlue.initScoreBoard();
         teamRed.initScoreBoard();
         JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
@@ -110,6 +112,32 @@ public class Wasteland extends Game<WastelandPlayer> {
                 Bukkit.getWorld("world").dropItem(new Location(Bukkit.getWorld("world"),randomX,harvestArea.getMax().getY(),randomZ), new ItemStack(Material.WHEAT));
             }
         }.runTaskTimer(getMain(),20,6);
+    }
+
+    public void timer () {
+        timerRunnable = new BukkitRunnable() {
+            int minutes = 0,seconds = 0;
+            @Override
+            public void run() {
+                if(seconds < 59)
+                    seconds++;
+                else{
+                    minutes++;
+                    seconds = 0;
+                }
+                String minutesString = String.valueOf(minutes),secondsString = String.valueOf(seconds);
+                if(minutes < 10)
+                    minutesString = "0"+minutesString;
+                if(seconds < 10)
+                    secondsString = "0"+secondsString;
+                for(Player player : Bukkit.getOnlinePlayers()){
+                    WastelandPlayer wastelandPlayer = getWastelandPlayer(player);
+                    wastelandPlayer.getScoreBoard().setLine(5, minutesString+":"+secondsString);
+                    wastelandPlayer.getScoreBoard().updateLines();
+                }
+            }
+        };
+        timerRunnable.runTaskTimer(getMain(),20,20);
     }
 
     public Team getTeamRed (){
