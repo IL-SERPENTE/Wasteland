@@ -58,6 +58,7 @@ public class PlayerEvent implements Listener {
         if(event.getEntity() instanceof Player){
             Player player = event.getEntity();
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
+            event.setKeepInventory(true);
             if(wastelandPlayer.getWheat() > 0)
                 event.setDeathMessage(player.getName()+ " est mort avec :" + wastelandPlayer.getWheat() + " blés sur lui");
             if(wastelandPlayer.getWheat() > 0){
