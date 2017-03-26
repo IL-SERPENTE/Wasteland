@@ -35,23 +35,26 @@ public class Team {
         for(Player player : this.member){
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
             ObjectiveSign objectiveSign =wastelandPlayer.getScoreBoard();
-            objectiveSign.setLine(3, "Votre coffre contient: " + wastelandPlayer.getTeam().getWheat());
+            objectiveSign.setLine(7,"Votre coffre :" + getWheat());
             objectiveSign.updateLines();
         }
     }
 
     public void initScoreBoard(){
         for(Player player : this.member) {
-            ObjectiveSign scoreBoard = new ObjectiveSign(this.getTeamColor().name(),this.getTeamColor().getChatColor() + "Team " + this.getTeamColor().getName());
+            ObjectiveSign scoreBoard = new ObjectiveSign(this.getTeamColor().name(),"Wasteland");
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
             wastelandPlayer.setScoreBoard(scoreBoard);
             ObjectiveSign objectiveSign =wastelandPlayer.getScoreBoard();
             objectiveSign.setLine(0, " ");
-            objectiveSign.setLine(1, "Vous avez: " + wastelandPlayer.getWheat() + " blés sur vous");
-            objectiveSign.setLine(2, "   ");
-            objectiveSign.setLine(3, "Votre coffre contient: " + wastelandPlayer.getTeam().getWheat());
-            objectiveSign.setLine(4, "      ");
-            objectiveSign.setLine(5, "00:00");
+            objectiveSign.setLine(1,"Équipe: " + teamColor.getChatColor() + teamColor.getName());
+            objectiveSign.setLine(2,"  ");
+            objectiveSign.setLine(3,"Nombre de blés");
+            objectiveSign.setLine(5, "   ");
+            objectiveSign.setLine(6,"Sur vous : " + wastelandPlayer.getWheat());
+            objectiveSign.setLine(7,"Votre coffre : " + getWheat());
+            objectiveSign.setLine(8, "      ");
+            objectiveSign.setLine(9, "00:00");
             objectiveSign.addReceiver(player);
         }
     }

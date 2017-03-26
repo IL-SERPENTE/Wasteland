@@ -46,6 +46,8 @@ public class WastelandPlayer extends GamePlayer {
        return team != null;
     }
 
+
+
     public boolean isInTeam(TeamColor color){
         boolean isInTeam = false;
         if(hasTeam())
@@ -55,7 +57,7 @@ public class WastelandPlayer extends GamePlayer {
     }
 
     public void updateScoreBoard(){
-        getScoreBoard().setLine(1, "Vous avez: " + getWheat() + " blés sur vous");
+        getScoreBoard().setLine(6,"Sur vous :" + getWheat());
         getScoreBoard().updateLines();
     }
 

@@ -111,6 +111,7 @@ public class Wasteland extends Game<WastelandPlayer> {
             public void run() {
                 int randomX = ThreadLocalRandom.current().nextInt(harvestArea.getMin().getBlockX(),harvestArea.getMax().getBlockX() + 1);
                 int randomZ =ThreadLocalRandom.current().nextInt(harvestArea.getMin().getBlockZ(),harvestArea.getMax().getBlockZ() + 1);
+
                 Bukkit.getWorld("world").dropItem(new Location(Bukkit.getWorld("world"),randomX,harvestArea.getMax().getY(),randomZ), new ItemStack(Material.WHEAT));
             }
         }.runTaskTimer(getMain(),20,6);
@@ -134,7 +135,7 @@ public class Wasteland extends Game<WastelandPlayer> {
                     secondsString = "0"+secondsString;
                 for(Player player : Bukkit.getOnlinePlayers()){
                     WastelandPlayer wastelandPlayer = getWastelandPlayer(player);
-                    wastelandPlayer.getScoreBoard().setLine(5, minutesString+":"+secondsString);
+                    wastelandPlayer.getScoreBoard().setLine(9, minutesString+":"+secondsString);
                     wastelandPlayer.getScoreBoard().updateLines();
                 }
             }
