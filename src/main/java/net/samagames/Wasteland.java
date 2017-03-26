@@ -42,6 +42,8 @@ public class Wasteland extends Game<WastelandPlayer> {
         Location loc = LocationUtils.str2loc(object.get("spawn").getAsString());
         this.spawn = loc;
         registeredPlayer = new HashMap<Player,WastelandPlayer>();
+        teamBlue.setEnnemies(teamRed);
+        teamRed.setEnnemies(teamBlue);
     }
 
     @Override

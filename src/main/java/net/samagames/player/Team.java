@@ -15,6 +15,7 @@ import java.util.List;
 public class Team {
 
     private int wheat;
+    private Team ennemies;
     private Location chestLocation,spawn;
     private Wasteland wasteland;
     private TeamColor teamColor;
@@ -55,6 +56,14 @@ public class Team {
         }
     }
 
+    public void setEnnemies(Team ennemies) {
+        this.ennemies = ennemies;
+    }
+
+    public Team getEnnemies() {
+        return ennemies;
+    }
+
     public Location getSpawn() {
         return spawn;
     }
@@ -67,6 +76,11 @@ public class Team {
 
     public void setWheat(int wheat) {
         this.wheat = wheat;
+        updateScoreBoard();
+    }
+
+    public void removeWheat(int wheat){
+        this.wheat = this.wheat - wheat;
         updateScoreBoard();
     }
 
