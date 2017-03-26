@@ -45,9 +45,12 @@ public class Team {
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
             wastelandPlayer.setScoreBoard(scoreBoard);
             ObjectiveSign objectiveSign =wastelandPlayer.getScoreBoard();
-            objectiveSign.setLine(2, " ");
+            objectiveSign.setLine(0, " ");
             objectiveSign.setLine(1, "Vous avez: " + wastelandPlayer.getWheat() + " blés sur vous");
+            objectiveSign.setLine(2, "   ");
             objectiveSign.setLine(3, "Votre coffre contient: " + wastelandPlayer.getTeam().getWheat());
+            objectiveSign.setLine(4, "      ");
+            objectiveSign.setLine(5, "00:00");
             objectiveSign.addReceiver(player);
         }
     }
