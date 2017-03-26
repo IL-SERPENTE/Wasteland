@@ -3,6 +3,7 @@ package net.samagames.player;
 import net.samagames.Wasteland;
 import net.samagames.entity.Turret;
 import net.samagames.tools.scoreboards.ObjectiveSign;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -42,7 +43,7 @@ public class Team {
 
     public void initScoreBoard(){
         for(Player player : this.member) {
-            ObjectiveSign scoreBoard = new ObjectiveSign(this.getTeamColor().name(),"Wasteland");
+            ObjectiveSign scoreBoard = new ObjectiveSign(this.getTeamColor().name(),  ChatColor.YELLOW + "" + ChatColor.BOLD +  "♨ Wasteland ♨");
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
             wastelandPlayer.setScoreBoard(scoreBoard);
             ObjectiveSign objectiveSign =wastelandPlayer.getScoreBoard();
