@@ -114,11 +114,16 @@ public class Wasteland extends Game<WastelandPlayer> {
         turret.init();
         turret.enable();
         Area harvestArea = new Area(LocationUtils.str2loc(object.get("harvest_area_first").getAsString()),LocationUtils.str2loc(object.get("harvest_area_second").getAsString()));
+
         new BukkitRunnable(){
             @Override
             public void run() {
-                int randomX = ThreadLocalRandom.current().nextInt(harvestArea.getMin().getBlockX(),harvestArea.getMax().getBlockX() + 1);
-                int randomZ =ThreadLocalRandom.current().nextInt(harvestArea.getMin().getBlockZ(),harvestArea.getMax().getBlockZ() + 1);
+                int randomX = 0;
+                int randomZ = 0;
+                while(!harvestArea.isInArea(new Location(Bukkit.getWorld("world"),randomX,harvestArea.getMax().getY(),randomZ))) {
+                    randomX = ThreadLocalRandom.current().nextInt(harvestArea.getMin().getBlockX(), harvestArea.getMax().getBlockX() + 1);
+                    randomZ = ThreadLocalRandom.current().nextInt(harvestArea.getMin().getBlockZ(), harvestArea.getMax().getBlockZ() + 1);
+                }
                 Bukkit.getWorld("world").dropItem(new Location(Bukkit.getWorld("world"),randomX,harvestArea.getMax().getY(),randomZ), new ItemStack(Material.WHEAT));
             }
         }.runTaskTimer(getMain(),20,6);
@@ -170,7 +175,6 @@ public class Wasteland extends Game<WastelandPlayer> {
         if(teamRed.getMember().size() >= teamBlue.getMember().size() && teamBlue.getMember().size() - teamRed.getMember().size() != 2){
             if(teamRed.contains(player)) teamRed.removePlayer(player);
             teamBlue.addPlayer(player);
-            ActionBarAPI.sendPermanentMessage(player,ChatColor.GRAY + "Vous êtes dans l'équipe" + ChatColor.YELLOW + " : " + ChatColor.BLUE + "bleue");
         }else
             player.sendMessage(ChatColor.RED + "Il y a trop de joueur dans cette équipe");
     }
@@ -183,7 +187,6 @@ public class Wasteland extends Game<WastelandPlayer> {
         if(teamRed.getMember().size() <= teamBlue.getMember().size() && teamRed.getMember().size() - teamBlue.getMember().size() != 2){
             if(teamBlue.contains(player)) teamBlue.removePlayer(player);
             teamRed.addPlayer(player);
-            ActionBarAPI.sendPermanentMessage(player,ChatColor.GRAY + "Vous êtes dans l'équipe" + ChatColor.YELLOW + " : " + ChatColor.RED + "rouge");
         }else
             player.sendMessage(ChatColor.RED + "Il y a trop de joueur dans cette équipe");
     }
