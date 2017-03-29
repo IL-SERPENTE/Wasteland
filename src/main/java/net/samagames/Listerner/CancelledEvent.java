@@ -1,10 +1,13 @@
 package net.samagames.Listerner;
 
 import net.samagames.Wasteland;
+import net.samagames.player.WastelandPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -22,6 +25,16 @@ public class CancelledEvent implements Listener {
         this.wasteland = wasteland;
     }
 
+
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
+        if(event.getDamager() instanceof Player && event.getEntity() instanceof  Player){
+            WastelandPlayer player = wasteland.getWastelandPlayer((Player) event.getEntity());
+            WastelandPlayer damager =  wasteland.getWastelandPlayer((Player) event.getDamager());
+            if(player.getTeam().equals(damager.getTeam()))
+                event.setCancelled(true);
+        }
+    }
 
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event){
