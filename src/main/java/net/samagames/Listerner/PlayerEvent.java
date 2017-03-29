@@ -4,7 +4,6 @@ import net.samagames.Wasteland;
 import net.samagames.WastelandItem;
 import net.samagames.player.WastelandPlayer;
 import net.samagames.tools.chat.ActionBarAPI;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -12,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
@@ -26,6 +26,19 @@ public class PlayerEvent implements Listener {
 
     public PlayerEvent (Wasteland wasteland){
         this.wasteland = wasteland;
+    }
+
+    @EventHandler
+    public void onPlayerItemHeld(PlayerItemHeldEvent event){
+        if(!wasteland.isStarted() && event.getPlayer().getInventory().getItem(event.getNewSlot()) != null){
+            Player player = event.getPlayer();
+            ItemStack itemStack = player.getInventory().getItem(event.getNewSlot());
+            for(WastelandItem wastelandItem : WastelandItem.values())
+                if(wastelandItem.getName().equals(itemStack.getItemMeta().getDisplayName())){
+                    ActionBarAPI.sendMessage(player,wastelandItem.getLore());
+                    break;
+                }
+        }
     }
 
     @EventHandler
@@ -64,11 +77,11 @@ public class PlayerEvent implements Listener {
             Player player = event.getEntity();
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
             event.setKeepInventory(true);
-            if(wastelandPlayer.getWheat() > 0)
-                event.setDeathMessage(player.getName()+ " est mort avec :" + wastelandPlayer.getWheat() + " blés sur lui");
+            event.setDroppedExp(0);
             if(wastelandPlayer.getWheat() > 0){
+                event.setDeathMessage(player.getName()+ " est mort avec :" + wastelandPlayer.getWheat() + " blés sur lui");
                 event.getDrops().clear();
-                event.getDrops().add(new ItemStack(Material.WHEAT,wastelandPlayer.getWheat()));
+                event.getEntity().getWorld().dropItem(event.getEntity().getLocation(),new ItemStack(Material.WHEAT,wastelandPlayer.getWheat()));
                 wastelandPlayer.setWheat(0);
             }
         }
