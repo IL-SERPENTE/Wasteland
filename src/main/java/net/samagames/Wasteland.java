@@ -49,6 +49,14 @@ public class Wasteland extends Game<WastelandPlayer> {
     @Override
     public void handleLogin(Player player){
         super.handleLogin(player);
+
+
+
+        player.setExp(0);
+        player.setLevel(0);
+
+        player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+
         player.teleport(getSpawn());
         player.getInventory().clear();
         player.setHealth(player.getMaxHealth());
@@ -111,7 +119,6 @@ public class Wasteland extends Game<WastelandPlayer> {
             public void run() {
                 int randomX = ThreadLocalRandom.current().nextInt(harvestArea.getMin().getBlockX(),harvestArea.getMax().getBlockX() + 1);
                 int randomZ =ThreadLocalRandom.current().nextInt(harvestArea.getMin().getBlockZ(),harvestArea.getMax().getBlockZ() + 1);
-
                 Bukkit.getWorld("world").dropItem(new Location(Bukkit.getWorld("world"),randomX,harvestArea.getMax().getY(),randomZ), new ItemStack(Material.WHEAT));
             }
         }.runTaskTimer(getMain(),20,6);

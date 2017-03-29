@@ -3,9 +3,11 @@ package net.samagames.player;
 import net.samagames.Wasteland;
 import net.samagames.entity.Turret;
 import net.samagames.tools.scoreboards.ObjectiveSign;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
 public class Team {
 
     private int wheat;
+    private org.bukkit.scoreboard.Team scoreBoardTeam;
     private Team ennemies;
     private Location chestLocation,spawn;
     private Wasteland wasteland;
@@ -29,7 +32,7 @@ public class Team {
         this.spawn = spawn;
         this.chestLocation = chestLocation;
         this.member = new ArrayList<>();
-
+        this.scoreBoardTeam = Bukkit.getScoreboardManager().getMainScoreboard().registerNewTeam(teamColor.getName());
     }
 
     public void updateScoreBoard(){
@@ -42,6 +45,7 @@ public class Team {
     }
 
     public void initScoreBoard(){
+        scoreBoardTeam.setPrefix(teamColor.getChatColor() + "[Équipe " + teamColor.getName()+ "]");
         for(Player player : this.member) {
             ObjectiveSign scoreBoard = new ObjectiveSign(this.getTeamColor().name(),  ChatColor.YELLOW + "" + ChatColor.BOLD +  "♨ Wasteland ♨");
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
@@ -107,12 +111,16 @@ public class Team {
 
     public void addPlayer(Player player){
         this.member.add(player);
+        scoreBoardTeam.addPlayer(player);
         player.setPlayerListName(this.getTeamColor().getChatColor() + player.getName());
         wasteland.getWastelandPlayer(player).setTeam(this);
     }
 
     public void removePlayer(Player player){
         this.member.remove(player);
+        scoreBoardTeam.removePlayer(player);
+        player.setPlayerListName(this.getTeamColor().getChatColor() + player.getName());
+        wasteland.getWastelandPlayer(player).setTeam(null);
     }
 
     public boolean contains(Player player){
