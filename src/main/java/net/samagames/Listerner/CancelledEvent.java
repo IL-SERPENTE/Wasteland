@@ -1,6 +1,7 @@
 package net.samagames.Listerner;
 
 import net.samagames.Wasteland;
+import net.samagames.api.SamaGamesAPI;
 import net.samagames.player.WastelandPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,25 +45,25 @@ public class CancelledEvent implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event){
-        if(!wasteland.isStarted())
+        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted())
             event.setCancelled(true);
     }
 
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event){
-        if(!wasteland.isStarted())
+        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted())
             event.setCancelled(true);
     }
 
     @EventHandler
     public void onPlayerPickupItem(PlayerPickupItemEvent event){
-        if(!wasteland.isStarted())
+        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted())
             event.setCancelled(true);
     }
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event){
-        if(!wasteland.isStarted())
+        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted())
             event.setCancelled(true);
     }
 

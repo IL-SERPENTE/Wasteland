@@ -4,10 +4,10 @@ import net.samagames.Listerner.CancelledEvent;
 import net.samagames.Listerner.PlayerEvent;
 import net.samagames.api.SamaGamesAPI;
 import net.samagames.api.games.GamePlayer;
+import net.samagames.api.games.Status;
 import net.samagames.entity.Turret;
-import net.samagames.player.Team;
-import net.samagames.player.TeamColor;
 import org.bukkit.plugin.java.JavaPlugin;
+
 
 /**
  * Created by werter on 04.03.2017.
@@ -20,16 +20,17 @@ public class WastelandMain extends JavaPlugin {
     public void onEnable(){
         wasteland =  new Wasteland("gameCode", "Wasteland", "by Werter", GamePlayer.class, this);
         SamaGamesAPI.get().getGameManager().registerGame(wasteland);
+        SamaGamesAPI.get().getGameManager().getGame().setStatus(Status.WAITING_FOR_PLAYERS);
+        SamaGamesAPI.get().getGameManager().setMaxReconnectTime(1);
         this.getServer().getPluginManager().registerEvents(new CancelledEvent(wasteland.getInstance()), this);
         this.getServer().getPluginManager().registerEvents(new PlayerEvent(wasteland.getInstance()),this);
         this.getServer().getPluginManager().registerEvents(new Turret(),this);
-
     }
 
     @Override
     public void onDisable() {
-        for(Turret turret : getInstance ().getTeamBlue().getTurrets()) turret.disable();
-        for(Turret turret : getInstance ().getTeamRed().getTurrets()) turret.disable();
+        //for(Turret turret : getInstance ().getTeamBlue().getTurrets()) turret.disable();
+        //for(Turret turret : getInstance ().getTeamRed().getTurrets()) turret.disable();
     }
 
     public Wasteland getInstance() {return wasteland;}

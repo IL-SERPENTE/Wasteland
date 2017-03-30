@@ -2,6 +2,7 @@ package net.samagames.Listerner;
 
 import net.samagames.Wasteland;
 import net.samagames.WastelandItem;
+import net.samagames.api.SamaGamesAPI;
 import net.samagames.player.WastelandPlayer;
 import net.samagames.tools.chat.ActionBarAPI;
 import org.bukkit.Material;
@@ -16,7 +17,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Random;
 
 /**
  * Created by werter on 08.03.2017.
@@ -30,7 +30,7 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerItemHeld(PlayerItemHeldEvent event){
-        if(!wasteland.isStarted() && event.getPlayer().getInventory().getItem(event.getNewSlot()) != null){
+        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted() && event.getPlayer().getInventory().getItem(event.getNewSlot()) != null){
             Player player = event.getPlayer();
             ItemStack itemStack = player.getInventory().getItem(event.getNewSlot());
             for(WastelandItem wastelandItem : WastelandItem.values())
@@ -117,7 +117,7 @@ public class PlayerEvent implements Listener {
                     event.setCancelled(true);
                 }
             }
-        if(!wasteland.isStarted() && event.hasItem()){
+        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted() && event.hasItem()){
             event.setCancelled(true);
             ItemStack item = event.getItem();
             if(item.equals(WastelandItem.JOIN_TEAM_BLUE.getItemStack())){
