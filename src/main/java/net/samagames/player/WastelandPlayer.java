@@ -1,10 +1,12 @@
 package net.samagames.player;
 
 import net.samagames.api.games.GamePlayer;
-import net.samagames.tools.chat.ActionBarAPI;
 import net.samagames.tools.scoreboards.ObjectiveSign;
 import org.bukkit.Sound;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Created by werter on 21.03.2017.
@@ -12,14 +14,28 @@ import org.bukkit.entity.Player;
 public class WastelandPlayer extends GamePlayer {
 
     private Player player;
+    private Entity armorStand;
     private ObjectiveSign scoreBoard;
     private Team team;
+    private Kit kit;
     private int wheat;
 
     public WastelandPlayer(Player player){
         super(player);
         this.player = player;
+        this.armorStand = player.getWorld().spawn(player.getLocation(),ArmorStand.class);
     }
+
+    public void initArmorStand(){
+        ((ArmorStand) this.armorStand).setSmall(true);
+        ((ArmorStand) this.armorStand).setVisible(true);
+        ((ArmorStand) this.armorStand).setBasePlate(false);
+        this.armorStand.setCustomNameVisible(true);
+        this.armorStand.setInvulnerable(true);
+        this.player.setPassenger(this.armorStand);
+    }
+
+    public Entity getArmorStand(){ return this.armorStand;}
 
     public ObjectiveSign getScoreBoard(){ return this.scoreBoard;}
 
@@ -47,7 +63,11 @@ public class WastelandPlayer extends GamePlayer {
        return team != null;
     }
 
+    public void setKit(Kit kit){
+         this.kit = kit;
+    }
 
+    public Kit getKit(){ return this.kit;}
 
     public boolean isInTeam(TeamColor color){
         boolean isInTeam = false;
@@ -57,6 +77,12 @@ public class WastelandPlayer extends GamePlayer {
         return isInTeam;
     }
 
+
+    public void equip(){
+        player.getInventory().clear();
+        player.getInventory().setContents(kit.getPlayerInventory().getContents());
+    }
+
     public void updateScoreBoard(){
         getScoreBoard().setLine(6,"Sur vous :" + getWheat());
         getScoreBoard().updateLines();
@@ -64,8 +90,13 @@ public class WastelandPlayer extends GamePlayer {
 
     public void setWheat(int wheat) {
         this.wheat = wheat;
+
+        this.armorStand.setCustomName(this.wheat + " blés");
+
         updateScoreBoard();
+
         player.setLevel(wheat);
+
         if(wheat == 50){
             player.sendMessage("Vous ne pouvez plus rammaser de blés");
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,(float) 1 , (float) 1);
