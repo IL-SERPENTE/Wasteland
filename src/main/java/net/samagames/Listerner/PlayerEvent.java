@@ -30,6 +30,8 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerItemHeld(PlayerItemHeldEvent event){
+        if(!wasteland.hasPlayer(event.getPlayer()))
+            return;
         if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted() && event.getPlayer().getInventory().getItem(event.getNewSlot()) != null){
             Player player = event.getPlayer();
             ItemStack itemStack = player.getInventory().getItem(event.getNewSlot());
@@ -43,6 +45,8 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+        if(!wasteland.hasPlayer(event.getPlayer()))
+            return;
         if (event.getItem().getItemStack().getType().equals(Material.WHEAT)) {
             event.setCancelled(true);
             Player player = event.getPlayer();
@@ -66,18 +70,24 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event){
+        if(!wasteland.hasPlayer(event.getPlayer()))
+            return;
         Player player = event.getPlayer();
         WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
         event.setRespawnLocation(wastelandPlayer.getTeam().getSpawn());
+        player.setPassenger(wastelandPlayer.getArmorStand());
     }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event){
+        if(!wasteland.hasPlayer(event.getEntity()))
+            return;
         if(event.getEntity() instanceof Player){
             Player player = event.getEntity();
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
             event.setKeepInventory(true);
             event.setDroppedExp(0);
+            event.setDeathMessage(null);
             if(wastelandPlayer.getWheat() > 0){
                 event.setDeathMessage(player.getName()+ " est mort avec :" + wastelandPlayer.getWheat() + " blés sur lui");
                 event.getDrops().clear();
@@ -89,6 +99,8 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event){
+        if(!wasteland.hasPlayer(event.getPlayer()))
+            return;
         Player player = event.getPlayer();
         WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
         if(event.hasBlock())
