@@ -1,12 +1,9 @@
 package net.samagames.player;
 
 
-import com.google.gson.Gson;
-import net.samagames.api.SamaGamesAPI;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -14,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import java.util.Arrays;
 
 /**
  * Created by werter on 07.04.2017.
@@ -47,6 +43,7 @@ public class Kit {
             ItemMeta itemMeta = itemStack.getItemMeta();
             ((LeatherArmorMeta)itemMeta).setColor(wastelandPlayer.getTeam().getTeamColor().getColor());
             itemStack.setItemMeta(itemMeta);
+            itemStack.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL,3);
         }
         player.getInventory().setArmorContents(itemStacks);
     }
