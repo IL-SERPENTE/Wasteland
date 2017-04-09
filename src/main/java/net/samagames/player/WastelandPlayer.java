@@ -67,9 +67,10 @@ public class WastelandPlayer extends GamePlayer {
        return team != null;
     }
 
-    public void setKit(Kit kit){
+    public void setKit(Kit kit,boolean sendMessage){
          this.kit = kit;
-        player.sendMessage("Tu as pris le kit: " + kit.getName());
+         if(sendMessage)
+            player.sendMessage("Tu as pris le kit: " + kit.getName());
     }
 
     public Kit getKit(){ return this.kit;}

@@ -46,6 +46,7 @@ public class Team {
     }
 
     public void initGame(){
+        if(!this.member.isEmpty())
         for(Player player : this.member) {
             this.team.addPlayer(player);
             ObjectiveSign scoreBoard = new ObjectiveSign(this.getTeamColor().name(),  ChatColor.YELLOW + "" + ChatColor.BOLD +  "♨ Wasteland ♨");
@@ -62,7 +63,7 @@ public class Team {
             objectiveSign.setLine(8, "      ");
             objectiveSign.setLine(9, "00:00");
             objectiveSign.addReceiver(player);
-            wastelandPlayer.getKit().equip(player);
+            wastelandPlayer.getKit().equip(wastelandPlayer);
         }
         this.team.setPrefix(this.teamColor.getChatColor() + "[Équipe " + this.teamColor.getName() + "] " );
         this.team.setNameVisible(ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS);

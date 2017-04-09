@@ -31,7 +31,7 @@ import java.util.Random;
 public class Wasteland extends Game<WastelandPlayer> {
 
     private HashMap<Player, WastelandPlayer> registeredPlayer;
-    private Kit kitDefender,kitDemolisher,kitHerbelist,kitRobber,kitTrapper;
+    private Kit kitDefault,kitDefender,kitDemolisher,kitHerbelist,kitRobber,kitTrapper;
     private Team teamRed;
     private Team teamBlue;
     private Wasteland instance;
@@ -47,15 +47,14 @@ public class Wasteland extends Game<WastelandPlayer> {
         this.teamBlue = new Team(getInstance(), TeamColor.BLUE, LocationUtils.str2loc(object.get("spawn_blue").getAsString()), LocationUtils.str2loc(object.get("chest_blue").getAsString()));
         this.teamRed = new Team(getInstance(), TeamColor.RED, LocationUtils.str2loc(object.get("spawn_red").getAsString()), LocationUtils.str2loc(object.get("chest_red").getAsString()));
         this.spawn = LocationUtils.str2loc(object.get("spawn").getAsString());
+        this.kitDefault = new Kit();
+        kitDefault.init();
+        this.kitDefender = new Defender(kitDefault.getPlayerInventory(),"Defenseur");
+        this.kitRobber = new Robber(kitDefault.getPlayerInventory(),"Voleur");
+        this.kitDemolisher = new Demolisher(kitDefault.getPlayerInventory(),"Demolisseur");
+        this.kitTrapper = new Trapper(kitDefault.getPlayerInventory(), "Trapeur");
+        this.kitHerbelist = new Herbalist(kitDefault.getPlayerInventory(), "Herboriste");
 
-        //Kit creation will change
-        Inventory playerInventory = Bukkit.createInventory(null, InventoryType.PLAYER);
-        playerInventory.setItem(1,new ItemStack(Material.CHAINMAIL_CHESTPLATE));
-        this.kitDefender = new Defender(playerInventory,"Defenseur");
-        this.kitRobber = new Robber(playerInventory,"Voleur");
-        this.kitDemolisher = new Demolisher(playerInventory,"Demolisseur");
-        this.kitTrapper = new Trapper(playerInventory, "Trapeur");
-        this.kitHerbelist = new Herbalist(playerInventory, "Herboriste");
         registeredPlayer = new HashMap<>();
         teamBlue.setEnnemies(teamRed);
         teamRed.setEnnemies(teamBlue);
@@ -80,6 +79,7 @@ public class Wasteland extends Game<WastelandPlayer> {
             if (item.isStarterItem()) {
                 player.getInventory().setItem(item.getSlot(), item.getItemStack());
             }
+            getWastelandPlayer(player).setKit(getKitDefault(),false);
         if (Bukkit.getOnlinePlayers().size() >= 8 && !SamaGamesAPI.get().getGameManager().getGame().isGameStarted())
             startGame();
 
@@ -220,6 +220,9 @@ public class Wasteland extends Game<WastelandPlayer> {
         return wastelandPlayer;
     }
 
+    public Kit getKitDefault() {
+        return kitDefault;
+    }
 
     public Kit getKitDefender() {
         return kitDefender;
