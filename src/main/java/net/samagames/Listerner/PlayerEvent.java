@@ -3,6 +3,8 @@ package net.samagames.Listerner;
 import net.samagames.Wasteland;
 import net.samagames.WastelandItem;
 import net.samagames.api.SamaGamesAPI;
+import net.samagames.entity.Plant;
+import net.samagames.entity.PlantType;
 import net.samagames.player.WastelandPlayer;
 import net.samagames.tools.chat.ActionBarAPI;
 import org.bukkit.Material;
@@ -17,6 +19,9 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
+import java.util.Random;
 
 
 /**
@@ -50,6 +55,11 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+        if(event.getPlayer().getInventory().contains(event.getItem().getItemStack()))
+            if(event.getItem().getType().equals(Material.RED_ROSE) || event.getItem().getType().equals(Material.DOUBLE_PLANT)){
+                event.setCancelled(true);
+                event.getPlayer().sendMessage("Vous avez déjà cette fleur dans votre inventaire. Utilisez la pour pouvoir la rammaser");
+            }
         if(!wasteland.hasPlayer(event.getPlayer()))
             return;
         if (event.getItem().getItemStack().getType().equals(Material.WHEAT)) {
@@ -96,24 +106,24 @@ public class PlayerEvent implements Listener {
                     return;
                 }
                 if(item.equals(WastelandItem.CHOOSE_KIT_DEFENDER.getItemStack())){
-                    wastelandPlayer.setKit(wasteland.getKitDefender());
+                    wastelandPlayer.setKit(wasteland.getKitDefender(),true);
                     return;
                 }
                 if(item.equals(WastelandItem.CHOOSE_KIT_DEMOLISHER.getItemStack())) {
-                    wastelandPlayer.setKit(wasteland.getKitDemolisher());
+                    wastelandPlayer.setKit(wasteland.getKitDemolisher(),true);
                     return;
 
                 }
                 if(item.equals(WastelandItem.CHOOSE_KIT_HERBALIST.getItemStack())) {
-                    wastelandPlayer.setKit(wasteland.getKitHerbelist());
+                    wastelandPlayer.setKit(wasteland.getKitHerbelist(),true);
                     return;
                 }
                 if(item.equals(WastelandItem.CHOOSE_KIT_ROBBER.getItemStack())) {
-                    wastelandPlayer.setKit(wasteland.getKitRobber());
+                    wastelandPlayer.setKit(wasteland.getKitRobber(),true);
                     return;
                 }
                 if(item.equals(WastelandItem.CHOOSE_KIT_TRAPPER.getItemStack())) {
-                    wastelandPlayer.setKit(wasteland.getKitTrapper());
+                    wastelandPlayer.setKit(wasteland.getKitTrapper(),true);
                     return;
                 }
         }
@@ -140,10 +150,14 @@ public class PlayerEvent implements Listener {
             event.setKeepInventory(true);
             event.setDroppedExp(0);
             event.setDeathMessage(null);
+            if(new Random().nextInt(50) == 3)
+            new Plant(event.getEntity().getLocation()).spawn();
             if(wastelandPlayer.getWheat() > 0){
                 event.setDeathMessage(player.getName()+ " est mort avec :" + wastelandPlayer.getWheat() + " blés sur lui");
                 event.getDrops().clear();
                 event.getEntity().getWorld().dropItem(event.getEntity().getLocation(),new ItemStack(Material.WHEAT,wastelandPlayer.getWheat()));
+                //if(new Random().nextInt(50) == 3){
+                //}
                 wastelandPlayer.setWheat(0);
             }
         }
@@ -155,6 +169,22 @@ public class PlayerEvent implements Listener {
             return;
         Player player = event.getPlayer();
         WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
+
+        //plant
+        if(SamaGamesAPI.get().getGameManager().getGame().isGameStarted() && event.hasItem())
+            if(event.getItem().getType().equals(Material.DOUBLE_PLANT) || event.getItem().getType().equals(Material.RED_ROSE)){
+                for(PlantType plantType : PlantType.values())
+                    if(plantType.getItemStack().equals(event.getItem())) {
+                    if(plantType.isBonus())
+                        wasteland.playEffect(wastelandPlayer.getTeam(),plantType);
+                    else
+                        wasteland.playEffect(wastelandPlayer.getTeam().getEnnemies(), plantType);
+                    break;
+                }
+                player.getItemInHand().setType(Material.AIR);
+            }
+
+        // Harvest
         if(event.hasBlock())
             if(wastelandPlayer.hasTeam()) {
                 if(wastelandPlayer.getTeam().getEnnemies().getChestLocation().equals(event.getClickedBlock().getLocation())){
@@ -181,6 +211,8 @@ public class PlayerEvent implements Listener {
                     event.setCancelled(true);
                 }
             }
+
+            //team ands kit selector
         if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted() && event.hasItem()){
             event.setCancelled(true);
             ItemStack item = event.getItem();

@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import net.samagames.api.SamaGamesAPI;
 import net.samagames.api.games.Game;
 import net.samagames.api.games.Status;
+import net.samagames.entity.PlantType;
 import net.samagames.entity.Turret;
 import net.samagames.player.Kit;
 import net.samagames.player.Team;
@@ -16,8 +17,6 @@ import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -54,8 +53,7 @@ public class Wasteland extends Game<WastelandPlayer> {
         this.kitDemolisher = new Demolisher(kitDefault.getPlayerInventory(),"Demolisseur");
         this.kitTrapper = new Trapper(kitDefault.getPlayerInventory(), "Trapeur");
         this.kitHerbelist = new Herbalist(kitDefault.getPlayerInventory(), "Herboriste");
-
-        registeredPlayer = new HashMap<>();
+        this.registeredPlayer = new HashMap<>();
         teamBlue.setEnnemies(teamRed);
         teamRed.setEnnemies(teamBlue);
     }
@@ -128,7 +126,7 @@ public class Wasteland extends Game<WastelandPlayer> {
         teamBlue.initGame();
         teamRed.initGame();
         JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
-        Turret turret = new Turret(getInstance(), getTeamBlue(), LocationUtils.str2loc(object.get("turret_north_west").getAsString()), 50);
+        Turret turret = new Turret(getInstance(), getTeamBlue(), LocationUtils.str2loc(object.get("turret_north_west").getAsString()), 50,null);
         turret.init();
         turret.enable();
         Area harvestArea = new Area(LocationUtils.str2loc(object.get("harvest_area_first").getAsString()), LocationUtils.str2loc(object.get("harvest_area_second").getAsString()));
@@ -218,6 +216,19 @@ public class Wasteland extends Game<WastelandPlayer> {
                     wastelandPlayer = map.getValue();
         }
         return wastelandPlayer;
+    }
+
+    public void playEffect(Team team, PlantType plantType){
+        for(Player player : team.getMember()) {
+            player.addPotionEffect(plantType.getPotionEffect());
+            player.sendMessage("Vous avez reçu " + plantType.getPotionEffect().getDuration()/20 + " de " + plantType.getPotionEffect().getType().getName() +  " au niveau " + plantType.getPotionEffect().getAmplifier());
+        }
+        if(new Random().nextInt(4) == 0)
+            for (Player player : team.getEnnemies().getMember()) {
+                player.addPotionEffect(plantType.getPotionEffect());
+                player.sendMessage("Vous avez reçu " + plantType.getPotionEffect().getDuration()/20 + " de " + plantType.getPotionEffect().getType().getName() +  " au niveau " + plantType.getPotionEffect().getAmplifier());
+            }
+
     }
 
     public Kit getKitDefault() {
