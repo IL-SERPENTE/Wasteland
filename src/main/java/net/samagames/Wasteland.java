@@ -5,15 +5,19 @@ import net.samagames.api.SamaGamesAPI;
 import net.samagames.api.games.Game;
 import net.samagames.api.games.Status;
 import net.samagames.entity.Turret;
+import net.samagames.player.Kit;
 import net.samagames.player.Team;
 import net.samagames.player.TeamColor;
 import net.samagames.player.WastelandPlayer;
+import net.samagames.player.kit.*;
 import net.samagames.tools.Area;
 import net.samagames.tools.LocationUtils;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -27,6 +31,7 @@ import java.util.Random;
 public class Wasteland extends Game<WastelandPlayer> {
 
     private HashMap<Player, WastelandPlayer> registeredPlayer;
+    private Kit kitDefender,kitDemolisher,kitHerbelist,kitRobber,kitTrapper;
     private Team teamRed;
     private Team teamBlue;
     private Wasteland instance;
@@ -41,9 +46,17 @@ public class Wasteland extends Game<WastelandPlayer> {
         JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
         this.teamBlue = new Team(getInstance(), TeamColor.BLUE, LocationUtils.str2loc(object.get("spawn_blue").getAsString()), LocationUtils.str2loc(object.get("chest_blue").getAsString()));
         this.teamRed = new Team(getInstance(), TeamColor.RED, LocationUtils.str2loc(object.get("spawn_red").getAsString()), LocationUtils.str2loc(object.get("chest_red").getAsString()));
-        Location loc = LocationUtils.str2loc(object.get("spawn").getAsString());
-        this.spawn = loc;
-        registeredPlayer = new HashMap<Player, WastelandPlayer>();
+        this.spawn = LocationUtils.str2loc(object.get("spawn").getAsString());
+
+        //Kit creation will change
+        Inventory playerInventory = Bukkit.createInventory(null, InventoryType.PLAYER);
+        playerInventory.setItem(1,new ItemStack(Material.CHAINMAIL_CHESTPLATE));
+        this.kitDefender = new Defender(playerInventory,"Defenseur");
+        this.kitRobber = new Robber(playerInventory,"Voleur");
+        this.kitDemolisher = new Demolisher(playerInventory,"Demolisseur");
+        this.kitTrapper = new Trapper(playerInventory, "Trapeur");
+        this.kitHerbelist = new Herbalist(playerInventory, "Herboriste");
+        registeredPlayer = new HashMap<>();
         teamBlue.setEnnemies(teamRed);
         teamRed.setEnnemies(teamBlue);
     }
@@ -51,7 +64,6 @@ public class Wasteland extends Game<WastelandPlayer> {
     @Override
     public void handleLogin(Player player) {
         super.handleLogin(player);
-
 
         player.setExp(0);
         player.setLevel(0);
@@ -68,6 +80,7 @@ public class Wasteland extends Game<WastelandPlayer> {
             if (item.isStarterItem()) {
                 player.getInventory().setItem(item.getSlot(), item.getItemStack());
             }
+            getWastelandPlayer(player).setKit(kitDefender);
         if (Bukkit.getOnlinePlayers().size() >= 8 && !SamaGamesAPI.get().getGameManager().getGame().isGameStarted())
             startGame();
 
@@ -113,8 +126,8 @@ public class Wasteland extends Game<WastelandPlayer> {
 
     public void start() {
         timer();
-        teamBlue.initScoreBoard();
-        teamRed.initScoreBoard();
+        teamBlue.initGame();
+        teamRed.initGame();
         JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
         Turret turret = new Turret(getInstance(), getTeamBlue(), LocationUtils.str2loc(object.get("turret_north_west").getAsString()), 50);
         turret.init();
@@ -138,7 +151,6 @@ public class Wasteland extends Game<WastelandPlayer> {
     public void timer() {
         timerRunnable = new BukkitRunnable() {
             int minutes = 0, seconds = 0;
-
             @Override
             public void run() {
                 if (seconds < 59)
@@ -157,6 +169,8 @@ public class Wasteland extends Game<WastelandPlayer> {
                     wastelandPlayer.getScoreBoard().setLine(9, minutesString + ":" + secondsString);
                     wastelandPlayer.getScoreBoard().updateLines();
                 }
+                if(minutes == 15)
+                    this.cancel();
             }
         };
         timerRunnable.runTaskTimer(getMain(), 20, 20);
@@ -204,6 +218,26 @@ public class Wasteland extends Game<WastelandPlayer> {
         return wastelandPlayer;
     }
 
+
+    public Kit getKitDefender() {
+        return kitDefender;
+    }
+
+    public Kit getKitDemolisher() {
+        return kitDemolisher;
+    }
+
+    public Kit getKitHerbelist() {
+        return kitHerbelist;
+    }
+
+    public Kit getKitRobber() {
+        return kitRobber;
+    }
+
+    public Kit getKitTrapper() {
+        return kitTrapper;
+    }
 
     public WastelandPlayer getWastelandPlayer(Player player){
         return this.registeredPlayer.get(player);

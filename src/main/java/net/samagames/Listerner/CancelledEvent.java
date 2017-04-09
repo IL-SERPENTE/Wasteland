@@ -44,12 +44,6 @@ public class CancelledEvent implements Listener {
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent event){
-        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted())
-            event.setCancelled(true);
-    }
-
-    @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event){
         if(!wasteland.hasPlayer(event.getPlayer()))
             return;

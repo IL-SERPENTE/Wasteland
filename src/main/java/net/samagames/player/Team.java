@@ -1,13 +1,14 @@
 package net.samagames.player;
 
+import net.minecraft.server.v1_10_R1.ScoreboardTeamBase;
 import net.samagames.Wasteland;
 import net.samagames.entity.Turret;
 import net.samagames.tools.scoreboards.ObjectiveSign;
+import net.samagames.tools.scoreboards.TeamHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
 public class Team {
 
     private int wheat;
-    private org.bukkit.scoreboard.Team scoreBoardTeam;
+    private TeamHandler.VTeam team;
     private Team ennemies;
     private Location chestLocation,spawn;
     private Wasteland wasteland;
@@ -32,7 +33,7 @@ public class Team {
         this.spawn = spawn;
         this.chestLocation = chestLocation;
         this.member = new ArrayList<>();
-        this.scoreBoardTeam = Bukkit.getScoreboardManager().getMainScoreboard().registerNewTeam(teamColor.getName());
+        this.team = new TeamHandler().createNewTeam(teamColor.getName(),teamColor.getName());
     }
 
     public void updateScoreBoard(){
@@ -44,13 +45,13 @@ public class Team {
         }
     }
 
-    public void initScoreBoard(){
-        scoreBoardTeam.setPrefix(teamColor.getChatColor() + "[Équipe " + teamColor.getName()+ "]");
+    public void initGame(){
         for(Player player : this.member) {
+            this.team.addPlayer(player);
             ObjectiveSign scoreBoard = new ObjectiveSign(this.getTeamColor().name(),  ChatColor.YELLOW + "" + ChatColor.BOLD +  "♨ Wasteland ♨");
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
             wastelandPlayer.setScoreBoard(scoreBoard);
-            ObjectiveSign objectiveSign =wastelandPlayer.getScoreBoard();
+            ObjectiveSign objectiveSign = wastelandPlayer.getScoreBoard();
             objectiveSign.setLine(0, " ");
             objectiveSign.setLine(1,"Équipe: " + teamColor.getChatColor() + teamColor.getName());
             objectiveSign.setLine(2,"  ");
@@ -61,7 +62,10 @@ public class Team {
             objectiveSign.setLine(8, "      ");
             objectiveSign.setLine(9, "00:00");
             objectiveSign.addReceiver(player);
+            wastelandPlayer.getKit().equip(player);
         }
+        this.team.setPrefix(this.teamColor.getChatColor() + "[Équipe " + this.teamColor.getName() + "] " );
+        this.team.setNameVisible(ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS);
     }
 
     public void setEnnemies(Team ennemies) {
@@ -111,14 +115,18 @@ public class Team {
 
     public void addPlayer(Player player){
         this.member.add(player);
-        scoreBoardTeam.addPlayer(player);
+        for(org.bukkit.scoreboard.Team team : player.getScoreboard().getTeams())
+            if(team.getPlayers().contains(player)) {
+                team.setPrefix(teamColor.getChatColor() + "[Équipe" + teamColor.getName() + "] ");
+                break;
+        }
         player.setPlayerListName(this.getTeamColor().getChatColor() + player.getName());
         wasteland.getWastelandPlayer(player).setTeam(this);
     }
 
     public void removePlayer(Player player){
         this.member.remove(player);
-        scoreBoardTeam.removePlayer(player);
+
         player.setPlayerListName(this.getTeamColor().getChatColor() + player.getName());
         wasteland.getWastelandPlayer(player).setTeam(null);
     }
