@@ -80,7 +80,6 @@ public class Wasteland extends Game<WastelandPlayer> {
             if (item.isStarterItem()) {
                 player.getInventory().setItem(item.getSlot(), item.getItemStack());
             }
-            getWastelandPlayer(player).setKit(kitDefender);
         if (Bukkit.getOnlinePlayers().size() >= 8 && !SamaGamesAPI.get().getGameManager().getGame().isGameStarted())
             startGame();
 
@@ -192,6 +191,8 @@ public class Wasteland extends Game<WastelandPlayer> {
         if (teamRed.getMember().size() >= teamBlue.getMember().size() && teamBlue.getMember().size() - teamRed.getMember().size() != 2) {
             if (teamRed.contains(player)) teamRed.removePlayer(player);
             teamBlue.addPlayer(player);
+            player.sendMessage("Vous avez rejoint la team bleue");
+
         } else
             player.sendMessage(ChatColor.RED + "Il y a trop de joueur dans cette équipe");
     }
@@ -204,6 +205,7 @@ public class Wasteland extends Game<WastelandPlayer> {
         if (teamRed.getMember().size() <= teamBlue.getMember().size() && teamRed.getMember().size() - teamBlue.getMember().size() != 2) {
             if (teamBlue.contains(player)) teamBlue.removePlayer(player);
             teamRed.addPlayer(player);
+            player.sendMessage("Vous avez rejoint la team rouge");
         } else
             player.sendMessage(ChatColor.RED + "Il y a trop de joueur dans cette équipe");
     }
