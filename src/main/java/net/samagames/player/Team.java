@@ -19,7 +19,6 @@ import java.util.List;
 public class Team {
 
     private int wheat;
-    private TeamHandler.VTeam team;
     private Team ennemies;
     private Location chestLocation,spawn;
     private Wasteland wasteland;
@@ -33,7 +32,6 @@ public class Team {
         this.spawn = spawn;
         this.chestLocation = chestLocation;
         this.member = new ArrayList<>();
-        this.team = new TeamHandler().createNewTeam(teamColor.getName(),teamColor.getName());
     }
 
     public void updateScoreBoard(){
@@ -48,7 +46,6 @@ public class Team {
     public void initGame(){
         if(!this.member.isEmpty())
         for(Player player : this.member) {
-            this.team.addPlayer(player);
             ObjectiveSign scoreBoard = new ObjectiveSign(this.getTeamColor().name(),  ChatColor.YELLOW + "" + ChatColor.BOLD +  "♨ Wasteland ♨");
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
             wastelandPlayer.setScoreBoard(scoreBoard);
@@ -65,8 +62,6 @@ public class Team {
             objectiveSign.addReceiver(player);
             wastelandPlayer.getKit().equip(wastelandPlayer);
         }
-        this.team.setPrefix(this.teamColor.getChatColor() + "[Équipe " + this.teamColor.getName() + "] " );
-        this.team.setNameVisible(ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS);
     }
 
     public void setEnnemies(Team ennemies) {
