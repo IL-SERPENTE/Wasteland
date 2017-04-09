@@ -1,11 +1,15 @@
 package net.samagames.player;
 
+import net.samagames.WastelandItem;
 import net.samagames.api.games.GamePlayer;
 import net.samagames.tools.scoreboards.ObjectiveSign;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -65,6 +69,7 @@ public class WastelandPlayer extends GamePlayer {
 
     public void setKit(Kit kit){
          this.kit = kit;
+        player.sendMessage("Tu as pris le kit: " + kit.getName());
     }
 
     public Kit getKit(){ return this.kit;}
@@ -78,9 +83,12 @@ public class WastelandPlayer extends GamePlayer {
     }
 
 
-    public void equip(){
-        player.getInventory().clear();
-        player.getInventory().setContents(kit.getPlayerInventory().getContents());
+    public void openKitSelector(){
+        Inventory inventory = Bukkit.createInventory(null, InventoryType.PLAYER, "Kit selector");
+        for(WastelandItem wastelandItem : WastelandItem.values())
+            if(!wastelandItem.isStarterItem())
+                inventory.setItem(wastelandItem.getSlot(),wastelandItem.getItemStack());
+        player.openInventory(inventory);
     }
 
     public void updateScoreBoard(){

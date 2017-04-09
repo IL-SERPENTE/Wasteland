@@ -1,7 +1,6 @@
 package net.samagames.player;
 
 
-import net.samagames.WastelandItem;
 import net.samagames.api.SamaGamesAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -20,7 +19,6 @@ public class Kit {
 
     public void init(){
         Arrays.asList(SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs().get("starter"));
-
     }
 
 
@@ -33,7 +31,7 @@ public class Kit {
     }
 
     public void equip(Player player){
-        player.sendMessage("tu es" + name);
+        player.sendMessage("tu es " + name);
         player.getInventory().clear();
         player.getInventory().setContents(playerInventory.getContents());
     }

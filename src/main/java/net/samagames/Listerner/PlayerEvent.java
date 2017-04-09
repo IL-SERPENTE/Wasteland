@@ -5,7 +5,6 @@ import net.samagames.WastelandItem;
 import net.samagames.api.SamaGamesAPI;
 import net.samagames.player.WastelandPlayer;
 import net.samagames.tools.chat.ActionBarAPI;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -13,12 +12,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 
@@ -36,12 +33,16 @@ public class PlayerEvent implements Listener {
     public void onPlayerItemHeld(PlayerItemHeldEvent event){
         if(!wasteland.hasPlayer(event.getPlayer()))
             return;
-        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted() && event.getPlayer().getInventory().getItem(event.getNewSlot()) != null){
+        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted()){
+            if (event.getPlayer().getInventory().getItem(event.getNewSlot()) == null){
+                ActionBarAPI.sendMessage(event.getPlayer(), "");
+                return;
+            }
             Player player = event.getPlayer();
             ItemStack itemStack = player.getInventory().getItem(event.getNewSlot());
             for(WastelandItem wastelandItem : WastelandItem.values())
                 if(wastelandItem.getName().equals(itemStack.getItemMeta().getDisplayName())){
-                    ActionBarAPI.sendMessage(player,wastelandItem.getLore());
+                    ActionBarAPI.sendPermanentMessage(player,wastelandItem.getLore());
                     break;
                 }
         }
@@ -74,23 +75,47 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event){
+        if(event.getCurrentItem().getType().equals(Material.AIR))
+            return;
         if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted()) {
             event.setCancelled(true);
-            if(event.getInventory() != event.getWhoClicked().getInventory()){
                 Player player = (Player) event.getWhoClicked();
+                player.closeInventory();
                 WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
-                String name = event.getCurrentItem().getItemMeta().getDisplayName();
-                if(name.equals("Defenseur"))
+                ItemStack item = event.getCurrentItem();
+                if(item.equals(WastelandItem.JOIN_TEAM_BLUE.getItemStack())) {
+                    wasteland.setTeamBlue(player);
+                    return;
+                }
+                if(item.equals(WastelandItem.JOIN_TEAM_RED.getItemStack())) {
+                    wasteland.setTeamRed(player);
+                    return;
+                }
+                if(item.equals(WastelandItem.KIT_SELECTOR.getItemStack())){
+                    wastelandPlayer.openKitSelector();
+                    return;
+                }
+                if(item.equals(WastelandItem.CHOOSE_KIT_DEFENDER.getItemStack())){
                     wastelandPlayer.setKit(wasteland.getKitDefender());
-                if(name.equals("Demolisseur"))
+                    return;
+                }
+                if(item.equals(WastelandItem.CHOOSE_KIT_DEMOLISHER.getItemStack())) {
                     wastelandPlayer.setKit(wasteland.getKitDemolisher());
-                if(name.equals("Herboriste"))
+                    return;
+
+                }
+                if(item.equals(WastelandItem.CHOOSE_KIT_HERBALIST.getItemStack())) {
                     wastelandPlayer.setKit(wasteland.getKitHerbelist());
-                if(name.equals("Voleur"))
+                    return;
+                }
+                if(item.equals(WastelandItem.CHOOSE_KIT_ROBBER.getItemStack())) {
+                    wastelandPlayer.setKit(wasteland.getKitRobber());
+                    return;
+                }
+                if(item.equals(WastelandItem.CHOOSE_KIT_TRAPPER.getItemStack())) {
                     wastelandPlayer.setKit(wasteland.getKitTrapper());
-                if(name.equals("Trappeur"))
-                    wastelandPlayer.setKit(wasteland.getKitTrapper());
-            }
+                    return;
+                }
         }
     }
 
@@ -160,11 +185,7 @@ public class PlayerEvent implements Listener {
             event.setCancelled(true);
             ItemStack item = event.getItem();
             if(item.equals(WastelandItem.KIT_SELECTOR.getItemStack())){
-                Inventory inventory = Bukkit.createInventory(null, InventoryType.PLAYER, "Kit selector");
-                for(WastelandItem wastelandItem : WastelandItem.values())
-                    if(!wastelandItem.isStarterItem())
-                        inventory.setItem(wastelandItem.getSlot(),wastelandItem.getItemStack());
-                player.openInventory(inventory);
+                wastelandPlayer.openKitSelector();
             }
             if(item.equals(WastelandItem.JOIN_TEAM_BLUE.getItemStack())){
                 wasteland.setTeamBlue(player);
