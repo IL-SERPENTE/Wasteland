@@ -7,6 +7,7 @@ import net.samagames.entity.Plant;
 import net.samagames.entity.PlantType;
 import net.samagames.player.WastelandPlayer;
 import net.samagames.tools.chat.ActionBarAPI;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -20,7 +21,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
 import java.util.Random;
 
 
@@ -58,7 +58,7 @@ public class PlayerEvent implements Listener {
         if(event.getPlayer().getInventory().contains(event.getItem().getItemStack()))
             if(event.getItem().getType().equals(Material.RED_ROSE) || event.getItem().getType().equals(Material.DOUBLE_PLANT)){
                 event.setCancelled(true);
-                event.getPlayer().sendMessage("Vous avez déjà cette fleur dans votre inventaire. Utilisez la pour pouvoir la rammaser");
+                event.getPlayer().sendMessage(ChatColor.RED + "Vous avez déjà cette fleur dans votre inventaire. Utilisez la pour pouvoir la rammaser");
             }
         if(!wasteland.hasPlayer(event.getPlayer()))
             return;
@@ -156,8 +156,6 @@ public class PlayerEvent implements Listener {
                 event.setDeathMessage(player.getName()+ " est mort avec :" + wastelandPlayer.getWheat() + " blés sur lui");
                 event.getDrops().clear();
                 event.getEntity().getWorld().dropItem(event.getEntity().getLocation(),new ItemStack(Material.WHEAT,wastelandPlayer.getWheat()));
-                //if(new Random().nextInt(50) == 3){
-                //}
                 wastelandPlayer.setWheat(0);
             }
         }
