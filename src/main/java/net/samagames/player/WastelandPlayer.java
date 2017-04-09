@@ -93,8 +93,10 @@ public class WastelandPlayer extends GamePlayer {
     }
 
     public void updateScoreBoard(){
-        getScoreBoard().setLine(6,"Sur vous :" + getWheat());
-        getScoreBoard().updateLines();
+        if(player.getScoreboard() != null) {
+            getScoreBoard().setLine(6, "Sur vous :" + getWheat());
+            getScoreBoard().updateLines();
+        }
     }
 
     public void setWheat(int wheat) {
