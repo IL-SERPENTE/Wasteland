@@ -17,12 +17,9 @@ import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by werter on 01.03.2017.
@@ -71,7 +68,7 @@ public class Wasteland extends Game<WastelandPlayer> {
         player.getInventory().clear();
         player.setHealth(player.getMaxHealth());
         player.setSaturation(20);
-        player.setGameMode(GameMode.ADVENTURE);
+        player.setGameMode(GameMode.SURVIVAL);
         registerPlayer(player);
         for (WastelandItem item : WastelandItem.values())
             if (item.isStarterItem()) {
@@ -131,16 +128,28 @@ public class Wasteland extends Game<WastelandPlayer> {
         turret.enable();
         Area harvestArea = new Area(LocationUtils.str2loc(object.get("harvest_area_first").getAsString()), LocationUtils.str2loc(object.get("harvest_area_second").getAsString()));
 
+        Location max = harvestArea.getMax();
+        int maxX = max.getBlockX();
+        int maxY = max.getBlockY();
+        int maxZ = max.getBlockZ();
+        Location min = harvestArea.getMin();
+        int minX = min.getBlockX();
+        int minY = min.getBlockY();
+        int minZ = min.getBlockZ();
+        ArrayList<Location> locations = new ArrayList<>();
+        for(int x = minX; x <= maxX; x++)
+            for(int z = minZ; z <= maxZ; z++)
+                for(int y = minY; y <= maxY; y++)
+                    locations.add(new Location(Bukkit.getWorld("world"),x,y,z));
+
+
         new BukkitRunnable() {
             @Override
             public void run() {
-                int randomX = 0;
-                int randomZ = 0;
-                while (!harvestArea.isInArea(new Location(Bukkit.getWorld("world"), randomX, harvestArea.getMax().getY(), randomZ))) {
-                    randomX = new Random().nextInt(harvestArea.getMax().getBlockX() + 1 - harvestArea.getMin().getBlockX()) + harvestArea.getMin().getBlockX();
-                    randomZ = new Random().nextInt(harvestArea.getMax().getBlockZ() + 1 - harvestArea.getMin().getBlockZ()) + harvestArea.getMin().getBlockZ();
-                }
-                Bukkit.getWorld("world").dropItem(new Location(Bukkit.getWorld("world"), randomX, harvestArea.getMax().getY(), randomZ), new ItemStack(Material.WHEAT));
+                Location location = new Location(Bukkit.getWorld("world"),0,0,0);
+                while (!location.getBlock().getType().equals(Material.SOIL) && !location.add(0,1,0).getBlock().getType().equals(Material.WHEAT))
+                    location = locations.get(new Random().nextInt(locations.size()));
+                location.add(0,1,0).getBlock().setType(Material.CROPS);
             }
         }.runTaskTimer(getMain(), 20, 6);
     }

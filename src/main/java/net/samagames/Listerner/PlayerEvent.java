@@ -13,6 +13,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -54,14 +55,29 @@ public class PlayerEvent implements Listener {
     }
 
     @EventHandler
+    public void onBlockBreak(BlockBreakEvent event){
+        if(!wasteland.hasPlayer(event.getPlayer()))
+            return;
+        event.setCancelled(true);
+        if(event.getBlock().getType().equals(Material.CROPS) && event.getPlayer() != null){
+            WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(event.getPlayer());
+            if(!(wastelandPlayer.getWheat() == 50)){
+                wastelandPlayer.addWheat(1);
+                event.getPlayer().playSound(event.getPlayer().getLocation(),Sound.ITEM_HOE_TILL,(float) 0.5,(float) 0.5);
+                event.getBlock().setType(Material.AIR);
+            }
+        }
+    }
+
+    @EventHandler
     public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+        if(!wasteland.hasPlayer(event.getPlayer()))
+            return;
         if(event.getPlayer().getInventory().contains(event.getItem().getItemStack()))
             if(event.getItem().getType().equals(Material.RED_ROSE) || event.getItem().getType().equals(Material.DOUBLE_PLANT)){
                 event.setCancelled(true);
                 event.getPlayer().sendMessage(ChatColor.RED + "Vous avez déjà cette fleur dans votre inventaire. Utilisez la pour pouvoir la rammaser");
             }
-        if(!wasteland.hasPlayer(event.getPlayer()))
-            return;
         if (event.getItem().getItemStack().getType().equals(Material.WHEAT)) {
             event.setCancelled(true);
             Player player = event.getPlayer();
