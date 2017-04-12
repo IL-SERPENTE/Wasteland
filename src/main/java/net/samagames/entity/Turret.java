@@ -47,7 +47,6 @@ public class Turret implements Listener{
         new BukkitRunnable(){
             @Override
             public void run() {
-                System.out.println("2 minutes");
                 for(Location location : locations) new Plant(location);
             }
         }.runTaskTimer(wasteland.getMain(),20,20*120);
