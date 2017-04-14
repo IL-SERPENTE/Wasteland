@@ -17,6 +17,8 @@ import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -44,11 +46,15 @@ public class Wasteland extends Game<WastelandPlayer> {
         this.teamRed = new Team(getInstance(), TeamColor.RED, LocationUtils.str2loc(object.get("spawn_red").getAsString()), LocationUtils.str2loc(object.get("chest_red").getAsString()));
         this.spawn = LocationUtils.str2loc(object.get("spawn").getAsString());
         this.kitDefault = new Kit();
-        kitDefault.init();
-        this.kitDefender = new Defender(kitDefault.getPlayerInventory(),"Defenseur");
+        this.kitDefault.init();
+        Inventory defenderInventory = kitDefault.getPlayerInventory();
+        defenderInventory.addItem(new ItemStack(Material.ARROW,6));
+        Inventory trapperInventory = kitDefault.getPlayerInventory();
+        trapperInventory.addItem(new ItemStack(Material.WEB,2));
+        this.kitDefender = new Defender(defenderInventory,"Defenseur");
         this.kitRobber = new Robber(kitDefault.getPlayerInventory(),"Voleur");
         this.kitDemolisher = new Demolisher(kitDefault.getPlayerInventory(),"Demolisseur");
-        this.kitTrapper = new Trapper(kitDefault.getPlayerInventory(), "Trapeur");
+        this.kitTrapper = new Trapper(trapperInventory, "Trapeur");
         this.kitHerbelist = new Herbalist(kitDefault.getPlayerInventory(), "Herboriste");
         this.registeredPlayer = new HashMap<>();
         teamBlue.setEnnemies(teamRed);

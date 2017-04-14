@@ -6,6 +6,9 @@ import net.samagames.api.SamaGamesAPI;
 import net.samagames.entity.Plant;
 import net.samagames.entity.PlantType;
 import net.samagames.player.WastelandPlayer;
+import net.samagames.player.kit.Demolisher;
+import net.samagames.player.kit.Herbalist;
+import net.samagames.player.kit.Robber;
 import net.samagames.tools.chat.ActionBarAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,6 +24,8 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Random;
 
@@ -152,6 +157,8 @@ public class PlayerEvent implements Listener {
             return;
         Player player = event.getPlayer();
         WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
+        if(wastelandPlayer.getKit() instanceof Demolisher)
+            player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION,30,1));
         event.setRespawnLocation(wastelandPlayer.getTeam().getSpawn());
         player.setPassenger(wastelandPlayer.getArmorStand());
     }
@@ -163,11 +170,17 @@ public class PlayerEvent implements Listener {
         if(event.getEntity() instanceof Player){
             Player player = event.getEntity();
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
+            player.getInventory().clear();
+            wastelandPlayer.getKit().equip(wastelandPlayer);
             event.setKeepInventory(true);
             event.setDroppedExp(0);
             event.setDeathMessage(null);
-            if(new Random().nextInt(50) == 3)
-            new Plant(event.getEntity().getLocation()).spawn();
+            if(!(wastelandPlayer.getKit() instanceof Herbalist))
+                if(new Random().nextInt(50) == 3)
+                    new Plant(event.getEntity().getLocation()).spawn();
+                else
+                    if(new Random().nextInt(25) == 3)
+                        new Plant(event.getEntity().getLocation()).spawn();
             if(wastelandPlayer.getWheat() > 0){
                 event.setDeathMessage(player.getName()+ " est mort avec :" + wastelandPlayer.getWheat() + " blés sur lui");
                 event.getDrops().clear();
@@ -214,7 +227,10 @@ public class PlayerEvent implements Listener {
                     }
                     int capacity = 50 - wastelandPlayer.getWheat();
                     if(capacity > 15)
-                        capacity = 15;
+                        if(wastelandPlayer.getKit() instanceof Robber)
+                            capacity = new Random().nextInt(16);
+                        else
+                            capacity = new Random().nextInt(4);
                     wastelandPlayer.getTeam().getEnnemies().removeWheat(capacity);
                     wastelandPlayer.addWheat(capacity);
                     player.sendMessage("Vous avez volé " + capacity + " blés");
