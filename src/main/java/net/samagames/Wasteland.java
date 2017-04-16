@@ -189,7 +189,7 @@ public class Wasteland extends Game<WastelandPlayer> {
                     secondsString = "0" + secondsString;
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     WastelandPlayer wastelandPlayer = getWastelandPlayer(player);
-                    wastelandPlayer.getScoreBoard().setLine(9, minutesString + ":" + secondsString);
+                    wastelandPlayer.getScoreBoard().setLine(10, minutesString + ":" + secondsString);
                     wastelandPlayer.getScoreBoard().updateLines();
                 }
                 if(minutes == 15)

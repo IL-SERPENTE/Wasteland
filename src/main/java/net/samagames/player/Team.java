@@ -57,8 +57,9 @@ public class Team {
             objectiveSign.setLine(5, "   ");
             objectiveSign.setLine(6,"Sur vous : " + wastelandPlayer.getWheat());
             objectiveSign.setLine(7,"Votre coffre : " + getWheat());
-            objectiveSign.setLine(8, "      ");
-            objectiveSign.setLine(9, "00:00");
+            objectiveSign.setLine(8, "L'équipe adverse: " + getEnnemies().getWheat());
+            objectiveSign.setLine(9, "      ");
+            objectiveSign.setLine(10, "00:00");
             objectiveSign.addReceiver(player);
             wastelandPlayer.getKit().equip(wastelandPlayer);
         }
