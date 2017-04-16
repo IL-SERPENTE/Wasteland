@@ -35,10 +35,11 @@ public class Team {
     }
 
     public void updateScoreBoard(){
-        for(Player player : this.member){
+        for(Player player : Bukkit.getOnlinePlayers()){
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
             ObjectiveSign objectiveSign =wastelandPlayer.getScoreBoard();
             objectiveSign.setLine(7,"Votre coffre :" + getWheat());
+            objectiveSign.setLine(8, "L'équipe adverse: " + wastelandPlayer.getTeam().getEnnemies().getWheat());
             objectiveSign.updateLines();
         }
     }
