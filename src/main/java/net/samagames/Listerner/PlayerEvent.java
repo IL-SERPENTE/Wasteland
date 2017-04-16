@@ -5,10 +5,8 @@ import net.samagames.WastelandItem;
 import net.samagames.api.SamaGamesAPI;
 import net.samagames.entity.Plant;
 import net.samagames.entity.PlantType;
+import net.samagames.player.Kit;
 import net.samagames.player.WastelandPlayer;
-import net.samagames.player.kit.Demolisher;
-import net.samagames.player.kit.Herbalist;
-import net.samagames.player.kit.Robber;
 import net.samagames.tools.chat.ActionBarAPI;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -152,7 +150,7 @@ public class PlayerEvent implements Listener {
             return;
         Player player = event.getPlayer();
         WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
-        if(wastelandPlayer.getKit() instanceof Demolisher)
+        if(wastelandPlayer.getKit().equals(Kit.DEMOLISHER))
             player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION,30,1));
         event.setRespawnLocation(wastelandPlayer.getTeam().getSpawn());
         player.setPassenger(wastelandPlayer.getArmorStand());
@@ -170,7 +168,7 @@ public class PlayerEvent implements Listener {
             event.setKeepInventory(true);
             event.setDroppedExp(0);
             event.setDeathMessage(null);
-            if(!(wastelandPlayer.getKit() instanceof Herbalist))
+            if(!(wastelandPlayer.getKit().equals(Kit.HERBALIST)))
                 if(new Random().nextInt(50) == 3)
                     new Plant(event.getEntity().getLocation()).spawn();
                 else
@@ -223,7 +221,7 @@ public class PlayerEvent implements Listener {
                     }
                     int capacity = 50 - wastelandPlayer.getWheat();
                     if(capacity > 15)
-                        if(wastelandPlayer.getKit() instanceof Robber)
+                        if(wastelandPlayer.getKit().equals(Kit.ROBBER))
                             capacity = new Random().nextInt(16);
                         else
                             capacity = new Random().nextInt(4);

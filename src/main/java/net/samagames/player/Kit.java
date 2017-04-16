@@ -15,29 +15,37 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 /**
  * Created by werter on 07.04.2017.
  */
-public class Kit {
+public enum Kit {
 
-    protected String name = "Default";
-    protected Inventory playerInventory = Bukkit.createInventory(null, InventoryType.PLAYER);
+    DEFAULT("Defaut"),
+    DEFENDER("Defensseur"),
+    DEMOLISHER("Demolisseur"),
+    HERBALIST("Heboriste"),
+    ROBBER("Voleur"),
+    TRAPPER("Trappeur");
 
-    public void init(){
-        this.playerInventory.addItem(new ItemStack(Material.IRON_SWORD),new ItemStack(Material.BOW),new ItemStack(Material.ARROW,10));
+
+    private ItemStack[] itemStacks = {new ItemStack(Material.IRON_SWORD),new ItemStack(Material.BOW),new ItemStack(Material.ARROW,10),new ItemStack(Material.WEB)};
+    private String name;
+    private Inventory inventory;
+
+    Kit(String name){
+        this.name = name;
     }
-
 
     public String getName() {
         return name;
     }
 
     public Inventory getPlayerInventory(){
-        return this.playerInventory;
+        return this.inventory;
     }
 
     public void equip(WastelandPlayer wastelandPlayer){
         Player player = wastelandPlayer.getPlayer();
         player.sendMessage("tu es " + name);
         player.getInventory().clear();
-        player.getInventory().setContents(playerInventory.getContents());
+        player.getInventory().setContents(inventory.getContents());
         ItemStack[] itemStacks = {new ItemStack(Material.LEATHER_BOOTS),new ItemStack(Material.LEATHER_LEGGINGS),new ItemStack(Material.LEATHER_CHESTPLATE),new ItemStack(Material.LEATHER_HELMET)};
         for(ItemStack itemStack : itemStacks) {
             ItemMeta itemMeta = itemStack.getItemMeta();
