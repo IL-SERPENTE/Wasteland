@@ -56,9 +56,9 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
-        if(!wasteland.hasPlayer(event.getPlayer()))
-            return;
         event.setCancelled(true);
+        if(!wasteland.hasPlayer(event.getPlayer()) || SamaGamesAPI.get().getGameManager().getGame().isGameStarted())
+            return;
         if(event.getBlock().getType().equals(Material.CROPS) && event.getPlayer() != null){
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(event.getPlayer());
             if(!(wastelandPlayer.getWheat() == 50)){
