@@ -129,7 +129,7 @@ public class Wasteland extends Game<WastelandPlayer> {
         teamBlue.initGame();
         teamRed.initGame();
         JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
-        Turret turret = new Turret(getInstance(), getTeamBlue(), LocationUtils.str2loc(object.get("turret_north_west").getAsString()), 50,null);
+        Turret turret = new Turret(getInstance(), getTeamBlue(), LocationUtils.str2loc(object.get("turret_north_west").getAsString()), 25,null);
         turret.init();
         turret.enable();
         Area harvestArea = new Area(LocationUtils.str2loc(object.get("harvest_area_first").getAsString()), LocationUtils.str2loc(object.get("harvest_area_second").getAsString()));
