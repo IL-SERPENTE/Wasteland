@@ -67,6 +67,7 @@ public class Turret implements Listener{
                         if(playerInTurret.get(player) != null && playerInTurret.get(player) == 10) {
                             team = wastelandPlayer.getTeam();
                             player.sendMessage("Vous avez capturé l'avant garde");
+                            playerInTurret.remove(player);
                             return;
                         }
                         if (playerInTurret.containsKey(player))
