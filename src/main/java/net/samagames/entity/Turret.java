@@ -17,6 +17,7 @@ import java.util.HashMap;
  */
 public class Turret implements Listener{
 
+    private BukkitRunnable bukkitRunnable;
     private Wasteland wasteland;
     private Location[] locations;
     private Team team;
@@ -34,8 +35,6 @@ public class Turret implements Listener{
         this.range = range;
     }
 
-
-    private BukkitRunnable bukkitRunnable;
 
 
     public void enable(){
@@ -74,7 +73,7 @@ public class Turret implements Listener{
                             playerInTurret.put(player, playerInTurret.get(player) + 1);
                         else
                             playerInTurret.put(player, 1);
-                        if(playerInTurret.get(player) == 10 || playerInTurret.get(player) == 5 || playerInTurret.get(player) < 4)
+                        if(playerInTurret.get(player) == 10 || playerInTurret.get(player) == 5 || playerInTurret.get(player) <= 3)
                             player.sendMessage("Restez encore " + (10 - playerInTurret.get(player)) + " dans l'avant garde pour le capturer.");
                     }
                 }
