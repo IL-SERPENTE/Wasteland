@@ -37,7 +37,7 @@ public class PlayerEvent implements Listener {
     public void onPlayerItemHeld(PlayerItemHeldEvent event){
         if(!wasteland.hasPlayer(event.getPlayer()))
             return;
-        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted()){
+        if(!wasteland.isGameStarted()){
             if (event.getPlayer().getInventory().getItem(event.getNewSlot()) == null){
                 ActionBarAPI.sendMessage(event.getPlayer(), "");
                 return;
@@ -55,7 +55,7 @@ public class PlayerEvent implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
         event.setCancelled(true);
-        if(!wasteland.hasPlayer(event.getPlayer()) || SamaGamesAPI.get().getGameManager().getGame().isGameStarted())
+        if(!wasteland.hasPlayer(event.getPlayer()) || wasteland.isGameStarted())
             return;
         if(event.getBlock().getType().equals(Material.CROPS) && event.getPlayer() != null){
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(event.getPlayer());
@@ -101,7 +101,7 @@ public class PlayerEvent implements Listener {
     public void onInventoryClick(InventoryClickEvent event){
         if(event.getCurrentItem().getType().equals(Material.AIR))
             return;
-        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted()) {
+        if(!wasteland.isGameStarted()) {
             event.setCancelled(true);
                 Player player = (Player) event.getWhoClicked();
                 player.closeInventory();
@@ -192,7 +192,7 @@ public class PlayerEvent implements Listener {
         WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
 
         //plant
-        if(SamaGamesAPI.get().getGameManager().getGame().isGameStarted() && event.hasItem())
+        if(wasteland.isGameStarted() && event.hasItem())
             if(event.getItem().getType().equals(Material.DOUBLE_PLANT) || event.getItem().getType().equals(Material.RED_ROSE)){
                 for(PlantType plantType : PlantType.values())
                     if(plantType.getItemStack().equals(event.getItem())) {
@@ -237,7 +237,7 @@ public class PlayerEvent implements Listener {
             }
 
             //team ands kit selector
-        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted() && event.hasItem()){
+        if(!wasteland.isGameStarted() && event.hasItem()){
             event.setCancelled(true);
             ItemStack item = event.getItem();
             if(item.equals(WastelandItem.KIT_SELECTOR.getItemStack())){

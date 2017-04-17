@@ -73,7 +73,7 @@ public class Wasteland extends Game<WastelandPlayer> {
                 player.getInventory().setItem(item.getSlot(), item.getItemStack());
             }
             getWastelandPlayer(player).setKit(getKitDefault(),false);
-        if (Bukkit.getOnlinePlayers().size() >= 8 && !SamaGamesAPI.get().getGameManager().getGame().isGameStarted())
+        if (Bukkit.getOnlinePlayers().size() >= 8 && !this.isGameStarted())
             startGame();
 
     }
@@ -82,7 +82,7 @@ public class Wasteland extends Game<WastelandPlayer> {
     public void startGame() {
         super.startGame();
 
-        SamaGamesAPI.get().getGameManager().getGame().setStatus(Status.STARTING);
+        this.setStatus(Status.STARTING);
 
         new BukkitRunnable() {
             int cooldown = 10;
@@ -106,7 +106,7 @@ public class Wasteland extends Game<WastelandPlayer> {
                                 player.teleport(LocationUtils.str2loc(jsonObject.get("spawn_blue").getAsString()));
                         }
 
-                        SamaGamesAPI.get().getGameManager().getGame().setStatus(Status.IN_GAME);
+                        getInstance().setStatus(Status.IN_GAME);
                         start();
                         this.cancel();
                     } else

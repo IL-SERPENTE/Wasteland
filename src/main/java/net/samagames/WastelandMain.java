@@ -20,7 +20,7 @@ public class WastelandMain extends JavaPlugin {
     public void onEnable(){
         wasteland =  new Wasteland("gameCode", "Wasteland", "by Werter", GamePlayer.class, this);
         SamaGamesAPI.get().getGameManager().registerGame(wasteland);
-        SamaGamesAPI.get().getGameManager().getGame().setStatus(Status.WAITING_FOR_PLAYERS);
+        wasteland.setStatus(Status.WAITING_FOR_PLAYERS);
         SamaGamesAPI.get().getGameManager().setMaxReconnectTime(1);
         this.getServer().getPluginManager().registerEvents(new CancelledEvent(wasteland.getInstance()), this);
         this.getServer().getPluginManager().registerEvents(new PlayerEvent(wasteland.getInstance()),this);

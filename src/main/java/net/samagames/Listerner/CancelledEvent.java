@@ -53,19 +53,19 @@ public class CancelledEvent implements Listener {
     public void onPlayerDropItem(PlayerDropItemEvent event){
         if(!wasteland.hasPlayer(event.getPlayer()))
             return;
-        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted())
+        if(!wasteland.isGameStarted())
             event.setCancelled(true);
     }
 
     @EventHandler
     public void onPlayerPickupItem(PlayerPickupItemEvent event){
-        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted())
+        if(!wasteland.isGameStarted())
             event.setCancelled(true);
     }
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event){
-        if(!SamaGamesAPI.get().getGameManager().getGame().isGameStarted())
+        if(!wasteland.isGameStarted())
             event.setCancelled(true);
     }
 
