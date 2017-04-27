@@ -22,6 +22,7 @@ public class WastelandMain extends JavaPlugin {
         SamaGamesAPI.get().getGameManager().registerGame(wasteland);
         wasteland.setStatus(Status.WAITING_FOR_PLAYERS);
         SamaGamesAPI.get().getGameManager().setMaxReconnectTime(1);
+        SamaGamesAPI.get().getGameManager().setLegacyPvP(true);
         this.getServer().getPluginManager().registerEvents(new CancelledEvent(wasteland.getInstance()), this);
         this.getServer().getPluginManager().registerEvents(new PlayerEvent(wasteland.getInstance()),this);
         this.getServer().getPluginManager().registerEvents(new Turret(),this);
@@ -29,8 +30,8 @@ public class WastelandMain extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        //for(Turret turret : getInstance ().getTeamBlue().getTurrets()) turret.disable();
-        //for(Turret turret : getInstance ().getTeamRed().getTurrets()) turret.disable();
+        for(Turret turret : getInstance ().getTeamBlue().getTurrets()) turret.disable();
+        for(Turret turret : getInstance ().getTeamRed().getTurrets()) turret.disable();
     }
 
     public Wasteland getInstance() {return wasteland;}
