@@ -54,11 +54,13 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
+
         event.setCancelled(true);
-        if(!wasteland.hasPlayer(event.getPlayer()) || wasteland.isGameStarted())
+        if(!wasteland.hasPlayer(event.getPlayer()) || !wasteland.isGameStarted())
             return;
         if(event.getBlock().getType().equals(Material.CROPS) && event.getPlayer() != null){
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(event.getPlayer());
+		if(wastelandPlayer.getTeam() == null) return;
             if(!(wastelandPlayer.getWheat() == 50)){
                 wastelandPlayer.addWheat(1);
                 event.getPlayer().playSound(event.getPlayer().getLocation(),Sound.ITEM_HOE_TILL,(float) 0.5,(float) 0.5);

@@ -29,11 +29,6 @@ public class CancelledEvent implements Listener {
 
 
     @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event){
-        event.setCancelled(true);
-    }
-
-    @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
         if(event.getDamager() instanceof Player && event.getEntity() instanceof  Player){
             WastelandPlayer player = wasteland.getWastelandPlayer((Player) event.getEntity());
