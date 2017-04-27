@@ -93,6 +93,7 @@ public class WastelandPlayer extends GamePlayer {
     }
 
     public void updateScoreBoard(){
+	if(this.team == null) return;
         if(player.getScoreboard() != null) {
             getScoreBoard().setLine(6, "Sur vous :" + getWheat());
             getScoreBoard().updateLines();
@@ -100,6 +101,7 @@ public class WastelandPlayer extends GamePlayer {
     }
 
     public void setWheat(int wheat) {
+	if(this.team == null) return;
         this.wheat = wheat;
 
         this.armorStand.setCustomName(this.wheat + " blés");
@@ -115,6 +117,7 @@ public class WastelandPlayer extends GamePlayer {
     }
 
     public void addWheat(int number){
+	if(this.team == null) return;
         setWheat(wheat + number);
         updateScoreBoard();
 
