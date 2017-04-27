@@ -29,14 +29,12 @@ public class Wasteland extends Game<WastelandPlayer> {
     private Kit kitDefault,kitDefender,kitDemolisher,kitHerbelist,kitRobber,kitTrapper;
     private Team teamRed;
     private Team teamBlue;
-    private Wasteland instance;
     private WastelandMain wastelandMain;
     private Location spawn;
     private BukkitRunnable timerRunnable;
 
     public Wasteland(String gameCodeName, String gameName, String gameDescription, Class gamePlayerClass, WastelandMain main) {
         super(gameCodeName, gameName, gameDescription, gamePlayerClass);
-        this.instance = this;
         this.wastelandMain = main;
         JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
         this.teamBlue = new Team(getInstance(), TeamColor.BLUE, LocationUtils.str2loc(object.get("spawn_blue").getAsString()), LocationUtils.str2loc(object.get("chest_blue").getAsString()));
@@ -273,6 +271,10 @@ public class Wasteland extends Game<WastelandPlayer> {
         return kitTrapper;
     }
 
+    public Wasteland getInstance(){
+	return this;
+    }
+
     public WastelandPlayer getWastelandPlayer(Player player){
         return this.registeredPlayer.get(player);
     }
@@ -287,10 +289,6 @@ public class Wasteland extends Game<WastelandPlayer> {
 
     public Location getSpawn(){
         return this.spawn;
-    }
-
-    public Wasteland getInstance(){
-        return this.instance;
     }
 
     public WastelandMain getMain(){ return this.wastelandMain;}
