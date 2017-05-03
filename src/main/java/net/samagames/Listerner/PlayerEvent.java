@@ -19,6 +19,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
 
@@ -221,17 +222,27 @@ public class PlayerEvent implements Listener {
                         player.sendMessage("Vous ne pouvez pas voler de ressource car vous êtes full");
                         return;
                     }
-                    int capacity = 50 - wastelandPlayer.getWheat();
-                    if(capacity > 15)
-                        capacity = new Random().nextInt(15);
-                    if(wastelandPlayer.getKit().equals(Kit.TRAPPER))
-                        if(new Random().nextInt(wastelandPlayer.getAmplifier()) == 3) {
-                            capacity = (15 - capacity) + capacity;
-                            player.sendMessage("Comme tu es voleur tu vole 15 blé");
-                    }
-                    wastelandPlayer.getTeam().getEnnemies().removeWheat(capacity);
-                    wastelandPlayer.addWheat(capacity);
-                    player.sendMessage("Vous avez volé " + capacity + " blés");
+                    if(player.getWalkSpeed() == 0) return;
+                    ActionBarAPI.sendMessage(player,"Vous avez volé " + ChatColor.MAGIC + "15" + ChatColor.RESET + " blés");
+
+                    new BukkitRunnable(){
+                        @Override
+                        public void run() {
+                            int capacity = 50 - wastelandPlayer.getWheat();
+                            if(capacity > 15)
+                                capacity = new Random().nextInt(15);
+                            if(wastelandPlayer.getKit().equals(Kit.TRAPPER))
+                                if(new Random().nextInt(wastelandPlayer.getAmplifier()) == 3) {
+                                    capacity = (15 - capacity) + capacity;
+                                    player.sendMessage("Comme tu es voleur tu vole 15 blé");
+                                }
+                            wastelandPlayer.getTeam().getEnnemies().removeWheat(capacity);
+                            wastelandPlayer.addWheat(capacity);
+                            wastelandPlayer.resetWalkSpeed();
+                            ActionBarAPI.sendMessage(player,"Vous avez volé " + capacity + " blés");
+                        }
+                    }.runTaskLater(wasteland.getMain(),20*5);
+
                 }
                 if (wastelandPlayer.getTeam().getChestLocation().equals(event.getClickedBlock().getLocation())) {
                     wastelandPlayer.getTeam().addWheat(wastelandPlayer.getWheat());

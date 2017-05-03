@@ -18,6 +18,7 @@ import org.bukkit.inventory.Inventory;
 public class WastelandPlayer extends GamePlayer {
 
     private Player player;
+    private float walkSpeed;
     private Entity armorStand;
     private ObjectiveSign scoreBoard;
     private Team team;
@@ -29,6 +30,11 @@ public class WastelandPlayer extends GamePlayer {
         super(player);
         this.player = player;
         this.armorStand = player.getWorld().spawn(player.getLocation(),ArmorStand.class);
+        this.walkSpeed = player.getWalkSpeed();
+    }
+
+    public void resetWalkSpeed(){
+        player.setWalkSpeed(this.walkSpeed);
     }
 
     public void initArmorStand(){
