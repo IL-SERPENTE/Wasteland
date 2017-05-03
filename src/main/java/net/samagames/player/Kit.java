@@ -46,6 +46,10 @@ public enum Kit {
         player.sendMessage("tu es " + name);
         player.getInventory().clear();
         player.getInventory().setContents(inventory.getContents());
+        if(wastelandPlayer.getKit().equals(Kit.TRAPPER))
+            player.getInventory().addItem(new ItemStack(Material.WEB,wastelandPlayer.getAmplifier()));
+        if(wastelandPlayer.getKit().equals(Kit.DEFENDER))
+            player.getInventory().addItem(new ItemStack(Material.ARROW,wastelandPlayer.getAmplifier()));
         ItemStack[] itemStacks = {new ItemStack(Material.LEATHER_BOOTS),new ItemStack(Material.LEATHER_LEGGINGS),new ItemStack(Material.LEATHER_CHESTPLATE),new ItemStack(Material.LEATHER_HELMET)};
         for(ItemStack itemStack : itemStacks) {
             ItemMeta itemMeta = itemStack.getItemMeta();

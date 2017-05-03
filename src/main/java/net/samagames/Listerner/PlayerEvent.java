@@ -162,7 +162,7 @@ public class PlayerEvent implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event){
         if(!wasteland.hasPlayer(event.getEntity()))
             return;
-        if(event.getEntity() instanceof Player){
+        if(event.getEntity() instanceof Player) {
             Player player = event.getEntity();
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
             player.getInventory().clear();
@@ -170,12 +170,12 @@ public class PlayerEvent implements Listener {
             event.setKeepInventory(true);
             event.setDroppedExp(0);
             event.setDeathMessage(null);
-            if(!(wastelandPlayer.getKit().equals(Kit.HERBALIST)))
-                if(new Random().nextInt(50) == 3)
+            if (!(wastelandPlayer.getKit().equals(Kit.HERBALIST))){
+                if (new Random().nextInt(50) == 3)
                     new Plant(event.getEntity().getLocation()).spawn();
-                else
-                    if(new Random().nextInt(25) == 3)
-                        new Plant(event.getEntity().getLocation()).spawn();
+            }else
+                if(new Random().nextInt(wastelandPlayer.getAmplifier()) == 3)
+                    new Plant(event.getEntity().getLocation()).spawn();
             if(wastelandPlayer.getWheat() > 0){
                 event.setDeathMessage(player.getName()+ " est mort avec :" + wastelandPlayer.getWheat() + " blés sur lui");
                 event.getDrops().clear();
@@ -223,10 +223,12 @@ public class PlayerEvent implements Listener {
                     }
                     int capacity = 50 - wastelandPlayer.getWheat();
                     if(capacity > 15)
-                        if(wastelandPlayer.getKit().equals(Kit.ROBBER))
-                            capacity = new Random().nextInt(16);
-                        else
-                            capacity = new Random().nextInt(4);
+                        capacity = new Random().nextInt(15);
+                    if(wastelandPlayer.getKit().equals(Kit.TRAPPER))
+                        if(new Random().nextInt(wastelandPlayer.getAmplifier()) == 3) {
+                            capacity = (15 - capacity) + capacity;
+                            player.sendMessage("Comme tu es voleur tu vole 15 blé");
+                    }
                     wastelandPlayer.getTeam().getEnnemies().removeWheat(capacity);
                     wastelandPlayer.addWheat(capacity);
                     player.sendMessage("Vous avez volé " + capacity + " blés");

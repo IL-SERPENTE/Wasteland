@@ -23,6 +23,7 @@ public class WastelandPlayer extends GamePlayer {
     private Team team;
     private Kit kit;
     private int wheat;
+    private int amplifier;
 
     public WastelandPlayer(Player player){
         super(player);
@@ -71,6 +72,37 @@ public class WastelandPlayer extends GamePlayer {
          this.kit = kit;
          if(sendMessage)
             player.sendMessage(ChatColor.YELLOW + "Tu as pris le kit: " + ChatColor.GRAY + kit.getName());
+         //TODO WITH SHOP IDs
+
+        if(kit.equals(Kit.DEFENDER)) {
+            this.amplifier = 6;
+            return;
+        }
+
+        if(kit.equals(Kit.DEMOLISHER)){
+            this.amplifier = 1;
+            return;
+        }
+
+        if(kit.equals(Kit.ROBBER)){
+            this.amplifier = 25;
+            return;
+        }
+
+        if(kit.equals(Kit.HERBALIST)) {
+            this.amplifier = 25;
+            return;
+        }
+
+        if(kit.equals(Kit.TRAPPER)){
+            amplifier = 2;
+            return;
+        }
+
+    }
+
+    public int getAmplifier(){
+        return  this.amplifier;
     }
 
     public Kit getKit(){ return this.kit;}
