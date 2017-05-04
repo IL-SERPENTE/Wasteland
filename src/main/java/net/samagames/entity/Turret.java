@@ -44,9 +44,9 @@ public class Turret implements Listener{
             public void run() {
                 seconds = seconds + 5;
                 if(seconds == 120) {
-                    if(locations != null) {
+                    if(locations != null)
                         for (Location location : locations) new Plant(location).spawn();
-                    }
+
                     seconds = 0;
                 }
                 for (Player player : Bukkit.getOnlinePlayers()) {

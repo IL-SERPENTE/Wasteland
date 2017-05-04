@@ -1,10 +1,8 @@
 package net.samagames.player;
 
-import net.minecraft.server.v1_10_R1.ScoreboardTeamBase;
 import net.samagames.Wasteland;
 import net.samagames.entity.Turret;
 import net.samagames.tools.scoreboards.ObjectiveSign;
-import net.samagames.tools.scoreboards.TeamHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
