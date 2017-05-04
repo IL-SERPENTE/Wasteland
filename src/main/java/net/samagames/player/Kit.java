@@ -27,7 +27,6 @@ public enum Kit {
 
     private ItemStack[] itemStacks = {new ItemStack(Material.IRON_SWORD),new ItemStack(Material.BOW),new ItemStack(Material.ARROW,10),new ItemStack(Material.WEB)};
     private String name;
-    private Inventory inventory;
 
     Kit(String name){
         this.name = name;
@@ -37,15 +36,12 @@ public enum Kit {
         return name;
     }
 
-    public Inventory getPlayerInventory(){
-        return this.inventory;
-    }
 
     public void equip(WastelandPlayer wastelandPlayer){
         Player player = wastelandPlayer.getPlayer();
         player.sendMessage("tu es " + name);
         player.getInventory().clear();
-        player.getInventory().setContents(inventory.getContents());
+        player.getInventory().setContents(this.itemStacks);
         if(wastelandPlayer.getKit().equals(Kit.TRAPPER))
             player.getInventory().addItem(new ItemStack(Material.WEB,wastelandPlayer.getAmplifier()));
         if(wastelandPlayer.getKit().equals(Kit.DEFENDER))
