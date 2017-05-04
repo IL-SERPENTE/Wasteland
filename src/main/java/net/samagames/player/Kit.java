@@ -1,12 +1,9 @@
 package net.samagames.player;
 
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -42,6 +39,8 @@ public enum Kit {
         player.sendMessage("tu es " + name);
         player.getInventory().clear();
         player.getInventory().setContents(this.itemStacks);
+        if(wastelandPlayer.getKit().equals(Kit.DEMOLISHER))
+            player.setMaxHealth(player.getMaxHealth() + wastelandPlayer.getAmplifier());
         if(wastelandPlayer.getKit().equals(Kit.TRAPPER))
             player.getInventory().addItem(new ItemStack(Material.WEB,wastelandPlayer.getAmplifier()));
         if(wastelandPlayer.getKit().equals(Kit.DEFENDER))

@@ -2,7 +2,6 @@ package net.samagames.Listerner;
 
 import net.samagames.Wasteland;
 import net.samagames.WastelandItem;
-import net.samagames.api.SamaGamesAPI;
 import net.samagames.entity.Plant;
 import net.samagames.entity.PlantType;
 import net.samagames.player.Kit;
@@ -17,8 +16,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
@@ -153,8 +150,6 @@ public class PlayerEvent implements Listener {
             return;
         Player player = event.getPlayer();
         WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
-        if(wastelandPlayer.getKit().equals(Kit.DEMOLISHER))
-            player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION,30,1));
         event.setRespawnLocation(wastelandPlayer.getTeam().getSpawn());
         player.setPassenger(wastelandPlayer.getArmorStand());
     }

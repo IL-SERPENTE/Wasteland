@@ -86,7 +86,7 @@ public class WastelandPlayer extends GamePlayer {
         }
 
         if(kit.equals(Kit.DEMOLISHER)){
-            this.amplifier = 1;
+            this.amplifier = 2;
             return;
         }
 
