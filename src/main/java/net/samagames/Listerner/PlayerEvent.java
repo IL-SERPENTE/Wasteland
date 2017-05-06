@@ -14,7 +14,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -52,8 +54,6 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
-
-        event.setCancelled(true);
         if(!wasteland.hasPlayer(event.getPlayer()) || !wasteland.isGameStarted())
             return;
         if(event.getBlock().getType().equals(Material.CROPS) && event.getPlayer() != null){
@@ -71,11 +71,6 @@ public class PlayerEvent implements Listener {
     public void onPlayerPickupItem(PlayerPickupItemEvent event) {
         if(!wasteland.hasPlayer(event.getPlayer()))
             return;
-        if(event.getPlayer().getInventory().contains(event.getItem().getItemStack()))
-            if(event.getItem().getType().equals(Material.RED_ROSE) || event.getItem().getType().equals(Material.DOUBLE_PLANT)){
-                event.setCancelled(true);
-                event.getPlayer().sendMessage(ChatColor.RED + "Vous avez déjà cette fleur dans votre inventaire. Utilisez la pour pouvoir la rammaser");
-            }
         if (event.getItem().getItemStack().getType().equals(Material.WHEAT)) {
             event.setCancelled(true);
             Player player = event.getPlayer();
@@ -94,7 +89,13 @@ public class PlayerEvent implements Listener {
                     player.playSound(player.getLocation(),Sound.ITEM_HOE_TILL,(float) 0.5,(float) 0.5);
                 }
             }
-        }
+        }else if(event.getItem().getType().equals(Material.RED_ROSE) || event.getItem().getType().equals(Material.DOUBLE_PLANT))
+            for (ItemStack itemStack : event.getPlayer().getInventory().getContents())
+                if (itemStack.getItemMeta().getDisplayName().equals(event.getItem().getName())) {
+                    event.setCancelled(true);
+                    event.getPlayer().sendMessage(ChatColor.RED + "Vous avez déjà cette fleur dans votre inventaire. Utilisez la pour pouvoir la rammaser");
+                    break;
+                }
     }
 
     @EventHandler
@@ -104,9 +105,16 @@ public class PlayerEvent implements Listener {
         if(!wasteland.isGameStarted()) {
             event.setCancelled(true);
                 Player player = (Player) event.getWhoClicked();
-                player.closeInventory();
                 WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
+                player.closeInventory();
                 ItemStack item = event.getCurrentItem();
+                if(player.getInventory().getItem(0).equals(item)){
+                    Inventory inventory = Bukkit.createInventory(null, InventoryType.HOPPER, item.getItemMeta().getDisplayName());
+                    inventory.setItem(WastelandItem.JOIN_TEAM_BLUE.getSlot(),WastelandItem.JOIN_TEAM_BLUE.getItemStack());
+                    inventory.setItem(WastelandItem.JOIN_TEAM_RED.getSlot(),WastelandItem.JOIN_TEAM_RED.getItemStack());
+                    player.openInventory(inventory);
+
+                }
                 if(item.equals(WastelandItem.JOIN_TEAM_BLUE.getItemStack())) {
                     wasteland.setTeamBlue(player);
                     return;
@@ -151,7 +159,6 @@ public class PlayerEvent implements Listener {
         Player player = event.getPlayer();
         WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
         event.setRespawnLocation(wastelandPlayer.getTeam().getSpawn());
-        player.setPassenger(wastelandPlayer.getArmorStand());
     }
 
     @EventHandler
@@ -172,8 +179,9 @@ public class PlayerEvent implements Listener {
             }else
                 if(new Random().nextInt(wastelandPlayer.getAmplifier()) == 3)
                     new Plant(event.getEntity().getLocation()).spawn();
+            event.setDeathMessage(ChatColor.GRAY + player.getName() + ChatColor.YELLOW + " a été tué par " + ChatColor.YELLOW + event.getEntity().getKiller().getName());
             if(wastelandPlayer.getWheat() > 0){
-                event.setDeathMessage(player.getName()+ " est mort avec :" + wastelandPlayer.getWheat() + " blés sur lui");
+                event.setDeathMessage(event.getDeathMessage() + ChatColor.YELLOW + "droppant " +ChatColor.GRAY + wastelandPlayer.getWheat());
                 event.getDrops().clear();
                 event.getEntity().getWorld().dropItem(event.getEntity().getLocation(),new ItemStack(Material.WHEAT,wastelandPlayer.getWheat()));
                 wastelandPlayer.setWheat(0);
@@ -194,11 +202,11 @@ public class PlayerEvent implements Listener {
             if(event.getItem().getType().equals(Material.DOUBLE_PLANT) || event.getItem().getType().equals(Material.RED_ROSE)){
                 for(PlantType plantType : PlantType.values())
                     if(plantType.getItemStack().equals(event.getItem())) {
-                    if(plantType.isBonus())
-                        wasteland.playEffect(wastelandPlayer.getTeam(),plantType);
-                    else
-                        wasteland.playEffect(wastelandPlayer.getTeam().getEnnemies(), plantType);
-                    break;
+                        if(plantType.isBonus())
+                            wasteland.playEffect(wastelandPlayer.getTeam(),plantType);
+                        else
+                            wasteland.playEffect(wastelandPlayer.getTeam().getEnnemies(), plantType);
+                        break;
                 }
                 player.getInventory().removeItem(event.getItem());
             }
@@ -207,7 +215,6 @@ public class PlayerEvent implements Listener {
         if(event.hasBlock())
             if(wastelandPlayer.hasTeam()) {
                 if(wastelandPlayer.getTeam().getEnnemies().getChestLocation().equals(event.getClickedBlock().getLocation())){
-                    //TODO ADD COOLDOWN AND RANDOM
                     event.setCancelled(true);
                     if(wastelandPlayer.getTeam().getEnnemies().getWheat() < 16){
                         player.sendMessage("L'équipe adverse n'as pas assez de ressources pour être volé");
@@ -253,11 +260,11 @@ public class PlayerEvent implements Listener {
             if(item.equals(WastelandItem.KIT_SELECTOR.getItemStack())){
                 wastelandPlayer.openKitSelector();
             }
-            if(item.equals(WastelandItem.JOIN_TEAM_BLUE.getItemStack())){
-                wasteland.setTeamBlue(player);
-            }
-            if(item.equals(WastelandItem.JOIN_TEAM_RED.getItemStack())) {
-                wasteland.setTeamRed(player);
+            if(item.getType().equals(Material.BANNER)){
+                Inventory inventory = Bukkit.createInventory(null, InventoryType.HOPPER, item.getItemMeta().getDisplayName());
+                inventory.setItem(WastelandItem.JOIN_TEAM_BLUE.getSlot(),WastelandItem.JOIN_TEAM_BLUE.getItemStack());
+                inventory.setItem(WastelandItem.JOIN_TEAM_RED.getSlot(),WastelandItem.JOIN_TEAM_RED.getItemStack());
+                player.openInventory(inventory);
             }
         }
     }
