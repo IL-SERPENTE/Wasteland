@@ -17,6 +17,7 @@ import java.util.List;
 public class Team {
 
     private int wheat;
+    private ObjectiveSign scoreBoard;
     private Team ennemies;
     private Location chestLocation,spawn;
     private Wasteland wasteland;
@@ -33,11 +34,11 @@ public class Team {
     }
 
     public void updateScoreBoard(){
-        for(Player player : Bukkit.getOnlinePlayers()){
-            WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
-            ObjectiveSign objectiveSign =wastelandPlayer.getScoreBoard();
-            objectiveSign.setLine(7,"Votre coffre :" + getWheat());
-            objectiveSign.setLine(8, "L'équipe adverse: " + wastelandPlayer.getTeam().getEnnemies().getWheat());
+        Team[] teams = {wasteland.getTeamBlue(),wasteland.getTeamRed()};
+        for(Team team : teams){
+            ObjectiveSign objectiveSign = team.getScoreBoard();
+            objectiveSign.setLine(7,"Votre coffre :" + team.getWheat());
+            objectiveSign.setLine(8, "L'équipe adverse: " + team.getEnnemies().getWheat());
             objectiveSign.updateLines();
         }
     }
@@ -45,9 +46,8 @@ public class Team {
     public void initGame(){
         if(!this.member.isEmpty())
         for(Player player : this.member) {
-            ObjectiveSign scoreBoard = new ObjectiveSign(this.getTeamColor().name(),  ChatColor.YELLOW + "" + ChatColor.BOLD +  "♨ Wasteland ♨");
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
-            wastelandPlayer.setScoreBoard(scoreBoard);
+            wastelandPlayer.setScoreBoard(wastelandPlayer.getTeam().getScoreBoard());
             ObjectiveSign objectiveSign = wastelandPlayer.getScoreBoard();
             objectiveSign.setLine(0, " ");
             objectiveSign.setLine(1,"Équipe: " + teamColor.getChatColor() + teamColor.getName());
@@ -55,8 +55,8 @@ public class Team {
             objectiveSign.setLine(3,"Nombre de blés");
             objectiveSign.setLine(5, "   ");
             objectiveSign.setLine(6,"Sur vous : " + wastelandPlayer.getWheat());
-            objectiveSign.setLine(7,"Votre coffre : " + getWheat());
-            objectiveSign.setLine(8, "L'équipe adverse: " + getEnnemies().getWheat());
+            objectiveSign.setLine(7,"Votre coffre : " + wastelandPlayer.getTeam().getWheat());
+            objectiveSign.setLine(8, "L'équipe adverse: " + wastelandPlayer.getTeam().getEnnemies().getWheat());
             objectiveSign.setLine(9, "      ");
             objectiveSign.setLine(10, "00:00");
             objectiveSign.addReceiver(player);
@@ -70,6 +70,12 @@ public class Team {
 
     public Team getEnnemies() {
         return ennemies;
+    }
+
+    public void setScoreBoard (ObjectiveSign scoreBoard) { this.scoreBoard = scoreBoard;}
+
+    public ObjectiveSign getScoreBoard() {
+        return scoreBoard;
     }
 
     public Location getSpawn() {
