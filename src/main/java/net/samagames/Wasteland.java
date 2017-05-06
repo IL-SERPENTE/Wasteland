@@ -12,9 +12,8 @@ import net.samagames.player.TeamColor;
 import net.samagames.player.WastelandPlayer;
 import net.samagames.tools.Area;
 import net.samagames.tools.LocationUtils;
+import net.samagames.tools.scoreboards.ObjectiveSign;
 import org.bukkit.*;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -38,7 +37,9 @@ public class Wasteland extends Game<WastelandPlayer> {
         this.wastelandMain = main;
         JsonObject object = SamaGamesAPI.get().getGameManager().getGameProperties().getConfigs();
         this.teamBlue = new Team(getInstance(), TeamColor.BLUE, LocationUtils.str2loc(object.get("spawn_blue").getAsString()), LocationUtils.str2loc(object.get("chest_blue").getAsString()));
+        this.teamBlue.setScoreBoard(new ObjectiveSign(this.teamBlue.getTeamColor().name(),  ChatColor.YELLOW + "" + ChatColor.BOLD +  "♨ Wasteland ♨"));
         this.teamRed = new Team(getInstance(), TeamColor.RED, LocationUtils.str2loc(object.get("spawn_red").getAsString()), LocationUtils.str2loc(object.get("chest_red").getAsString()));
+        this.teamRed.setScoreBoard(new ObjectiveSign(this.teamRed.getTeamColor().name(),  ChatColor.YELLOW + "" + ChatColor.BOLD +  "♨ Wasteland ♨"));
         this.spawn = LocationUtils.str2loc(object.get("spawn").getAsString());
         this.kitDefault = Kit.DEFAULT;
         this.kitDefender = Kit.DEFENDER;
@@ -153,10 +154,19 @@ public class Wasteland extends Game<WastelandPlayer> {
         new BukkitRunnable() {
             @Override
             public void run() {
+                boolean areEmptyBlock = false;
+                for (Location location : locations)
+                    if(!location.getBlock().getType().equals(Material.SOIL) && !location.add(0,1,0).getBlock().getType().equals(Material.WHEAT)){
+                    areEmptyBlock = true;
+                    break;
+                    }
+                if(!areEmptyBlock)
+                    return;
                 Location location = new Location(Bukkit.getWorld("world"),0,0,0);
                 while (!location.getBlock().getType().equals(Material.SOIL) && !location.add(0,1,0).getBlock().getType().equals(Material.WHEAT))
                     location = locations.get(new Random().nextInt(locations.size()));
                 location.add(0,1,0).getBlock().setType(Material.CROPS);
+                location.add(0,1,0).getBlock().setData((byte) 7);
             }
         }.runTaskTimer(getMain(), 20, 6);
     }
@@ -224,15 +234,6 @@ public class Wasteland extends Game<WastelandPlayer> {
             player.sendMessage(ChatColor.RED + "Il y a trop de joueur dans cette équipe");
     }
 
-    public WastelandPlayer getWastelandPlayerByArmorStand(Entity armorStand) {
-        WastelandPlayer wastelandPlayer = null;
-        if (armorStand instanceof ArmorStand)
-            for (Map.Entry<Player, WastelandPlayer> map : this.registeredPlayer.entrySet()) {
-                if(map.getValue().getArmorStand().equals(armorStand))
-                    wastelandPlayer = map.getValue();
-        }
-        return wastelandPlayer;
-    }
 
     public void playEffect(Team team, PlantType plantType){
         for(Player player : team.getMember()) {
@@ -244,7 +245,6 @@ public class Wasteland extends Game<WastelandPlayer> {
                 player.addPotionEffect(plantType.getPotionEffect());
                 player.sendMessage("Vous avez reçu " + plantType.getPotionEffect().getDuration()/20 + " de " + plantType.getPotionEffect().getType().getName() +  " au niveau " + plantType.getPotionEffect().getAmplifier());
             }
-
     }
 
     public Kit getKitDefault() {
