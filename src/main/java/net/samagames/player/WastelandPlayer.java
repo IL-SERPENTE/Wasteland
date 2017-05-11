@@ -5,8 +5,8 @@ import net.samagames.api.games.GamePlayer;
 import net.samagames.tools.scoreboards.ObjectiveSign;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -19,7 +19,6 @@ public class WastelandPlayer extends GamePlayer {
 
     private Player player;
     private float walkSpeed;
-    private Entity armorStand;
     private ObjectiveSign scoreBoard;
     private Team team;
     private Kit kit;
@@ -29,7 +28,6 @@ public class WastelandPlayer extends GamePlayer {
     public WastelandPlayer(Player player){
         super(player);
         this.player = player;
-        this.armorStand = player.getWorld().spawn(player.getLocation(),ArmorStand.class);
         this.walkSpeed = player.getWalkSpeed();
     }
 
@@ -37,16 +35,7 @@ public class WastelandPlayer extends GamePlayer {
         player.setWalkSpeed(this.walkSpeed);
     }
 
-    public void initArmorStand(){
-        ((ArmorStand) this.armorStand).setSmall(true);
-        ((ArmorStand) this.armorStand).setVisible(true);
-        ((ArmorStand) this.armorStand).setBasePlate(false);
-        this.armorStand.setCustomNameVisible(true);
-        this.armorStand.setInvulnerable(true);
-        this.player.setPassenger(this.armorStand);
-    }
 
-    public Entity getArmorStand(){ return this.armorStand;}
 
     public ObjectiveSign getScoreBoard(){ return this.scoreBoard;}
 
@@ -124,9 +113,13 @@ public class WastelandPlayer extends GamePlayer {
 
     public void openKitSelector(){
         Inventory inventory = Bukkit.createInventory(null, InventoryType.PLAYER, "Kit selector");
-        for(WastelandItem wastelandItem : WastelandItem.values())
-            if(!wastelandItem.isStarterItem())
-                inventory.setItem(wastelandItem.getSlot(),wastelandItem.getItemStack());
+        for(WastelandItem wastelandItem : WastelandItem.values()) {
+            if(wastelandItem.getItemStack().getType().equals(Material.BANNER)){
+                continue;
+            }
+            if (!wastelandItem.isStarterItem())
+                inventory.setItem(wastelandItem.getSlot(), wastelandItem.getItemStack());
+        }
         player.openInventory(inventory);
     }
 
@@ -141,8 +134,6 @@ public class WastelandPlayer extends GamePlayer {
     public void setWheat(int wheat) {
 	if(this.team == null) return;
         this.wheat = wheat;
-
-        this.armorStand.setCustomName(this.wheat + " blés");
 
         updateScoreBoard();
 
