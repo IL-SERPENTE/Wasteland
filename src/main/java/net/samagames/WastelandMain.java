@@ -28,11 +28,6 @@ public class WastelandMain extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new Turret(),this);
     }
 
-    @Override
-    public void onDisable() {
-        for(Turret turret : getInstance ().getTeamBlue().getTurrets()) turret.disable();
-        for(Turret turret : getInstance ().getTeamRed().getTurrets()) turret.disable();
-    }
 
     public Wasteland getInstance() {return wasteland;}
 
