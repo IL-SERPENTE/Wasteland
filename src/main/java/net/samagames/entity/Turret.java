@@ -4,6 +4,7 @@ import net.samagames.Wasteland;
 import net.samagames.player.Team;
 import net.samagames.player.WastelandPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
@@ -74,9 +75,10 @@ public class Turret implements Listener{
                             playerInTurret.put(player, playerInTurret.get(player) + 1);
                         else
                             playerInTurret.put(player, 1);
-                        if(playerInTurret.get(player) == 10 || playerInTurret.get(player) == 5 || playerInTurret.get(player) <= 3)
-                            player.sendMessage("Restez encore " + (10 - playerInTurret.get(player)) + " dans l'avant garde pour le capturer.");
-                    }
+                        if(playerInTurret.get(player) == 1)
+                            player.sendMessage(ChatColor.BLUE + "[Avant-Garde]" + ChatColor.YELLOW + "Restez encore 10 secondes dans le perimetre de l'avant garde pour le capturer");
+                    }else
+                        playerInTurret.remove(player);
                 }
             }
         }.runTaskTimer(wasteland.getMain(),20,20);
