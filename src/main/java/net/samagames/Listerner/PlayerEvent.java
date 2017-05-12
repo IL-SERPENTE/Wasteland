@@ -35,21 +35,12 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerItemHeld(PlayerItemHeldEvent event){
-        if(!wasteland.hasPlayer(event.getPlayer()))
+        if(!wasteland.hasPlayer(event.getPlayer()) || !wasteland.isGameStarted())
             return;
-        if(!wasteland.isGameStarted()){
-            if (event.getPlayer().getInventory().getItem(event.getNewSlot()) == null){
-                ActionBarAPI.sendMessage(event.getPlayer(), "");
-                return;
-            }
-            Player player = event.getPlayer();
-            ItemStack itemStack = player.getInventory().getItem(event.getNewSlot());
-            for(WastelandItem wastelandItem : WastelandItem.values())
-                if(wastelandItem.getName().equals(itemStack.getItemMeta().getDisplayName())){
-                    ActionBarAPI.sendPermanentMessage(player,wastelandItem.getLore());
-                    break;
-                }
-        }
+        Player player = event.getPlayer();
+        if(player.getInventory().getItem(event.getNewSlot()) == null)
+            ActionBarAPI.removeMessage(player,true);
+        ActionBarAPI.sendPermanentMessage(event.getPlayer(),player.getInventory().getItem(event.getNewSlot()).getItemMeta().getDisplayName());
     }
 
     @EventHandler
