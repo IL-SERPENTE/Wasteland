@@ -2,6 +2,7 @@ package net.samagames.Listerner;
 
 import net.samagames.Wasteland;
 import net.samagames.WastelandItem;
+import net.samagames.api.games.Status;
 import net.samagames.entity.Plant;
 import net.samagames.entity.PlantType;
 import net.samagames.player.Kit;
@@ -35,7 +36,7 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerItemHeld(PlayerItemHeldEvent event){
-        if(!wasteland.hasPlayer(event.getPlayer()) || !wasteland.isGameStarted())
+        if(!wasteland.hasPlayer(event.getPlayer()) || !wasteland.isGameStarted() || !wasteland.getStatus().equals(Status.FINISHED))
             return;
         Player player = event.getPlayer();
         if(player.getInventory().getItem(event.getNewSlot()) == null)
@@ -45,7 +46,7 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
-        if(!wasteland.hasPlayer(event.getPlayer()) || !wasteland.isGameStarted())
+        if(!wasteland.hasPlayer(event.getPlayer()) || !wasteland.isGameStarted() || !wasteland.getStatus().equals(Status.FINISHED))
             return;
         if(event.getBlock().getType().equals(Material.CROPS) && event.getPlayer() != null){
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(event.getPlayer());
@@ -60,7 +61,7 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerPickupItem(PlayerPickupItemEvent event) {
-        if(!wasteland.hasPlayer(event.getPlayer()))
+        if(!wasteland.hasPlayer(event.getPlayer()) || !wasteland.getStatus().equals(Status.FINISHED))
             return;
         if (event.getItem().getItemStack().getType().equals(Material.WHEAT)) {
             event.setCancelled(true);
@@ -91,7 +92,7 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event){
-        if(event.getCurrentItem().getType().equals(Material.AIR))
+        if(event.getCurrentItem().getType().equals(Material.AIR) || !wasteland.getStatus().equals(Status.FINISHED))
             return;
         if(!wasteland.isGameStarted()) {
             event.setCancelled(true);
@@ -145,7 +146,7 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event){
-        if(!wasteland.hasPlayer(event.getPlayer()))
+        if(!wasteland.hasPlayer(event.getPlayer()) || !wasteland.getStatus().equals(Status.FINISHED))
             return;
         Player player = event.getPlayer();
         WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
@@ -154,7 +155,7 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event){
-        if(!wasteland.hasPlayer(event.getEntity()))
+        if(!wasteland.hasPlayer(event.getEntity()) || !wasteland.getStatus().equals(Status.FINISHED))
             return;
         if(event.getEntity() instanceof Player) {
             Player player = event.getEntity();
@@ -183,7 +184,7 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event){
-        if(!wasteland.hasPlayer(event.getPlayer()))
+        if(!wasteland.hasPlayer(event.getPlayer()) || !wasteland.getStatus().equals(Status.FINISHED))
             return;
         Player player = event.getPlayer();
         WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);

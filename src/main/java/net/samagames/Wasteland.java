@@ -76,6 +76,12 @@ public class Wasteland extends Game<WastelandPlayer> {
             startGame();
 
     }
+    @Override
+    public void handleGameEnd(){
+        super.handleGameEnd();
+        getInstance().setStatus(Status.FINISHED);
+
+    }
 
     @Override
     public void startGame() {
@@ -192,8 +198,10 @@ public class Wasteland extends Game<WastelandPlayer> {
                     wastelandPlayer.getScoreBoard().setLine(10, minutesString + ":" + secondsString);
                     wastelandPlayer.getScoreBoard().updateLines();
                 }
-                if(minutes == 15)
+                if(minutes == 15) {
                     this.cancel();
+                    handleGameEnd();
+                }
             }
         };
         timerRunnable.runTaskTimer(getMain(), 20, 20);
