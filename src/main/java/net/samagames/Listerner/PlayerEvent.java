@@ -228,12 +228,12 @@ public class PlayerEvent implements Listener {
                             if(wastelandPlayer.getKit().equals(Kit.TRAPPER))
                                 if(new Random().nextInt(wastelandPlayer.getAmplifier()) == 3) {
                                     capacity = (15 - capacity) + capacity;
-                                    player.sendMessage("Comme tu es voleur tu vole 15 blé");
                                 }
                             wastelandPlayer.getTeam().getEnnemies().removeWheat(capacity);
                             wastelandPlayer.addWheat(capacity);
                             wastelandPlayer.resetWalkSpeed();
                             ActionBarAPI.sendMessage(player,"Vous avez volé " + capacity + " blés");
+                            player.sendMessage("Vous avez volé " + capacity + " blés");
                         }
                     }.runTaskLater(wasteland.getMain(),20*5);
 
