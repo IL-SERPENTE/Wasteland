@@ -248,6 +248,7 @@ public class PlayerEvent implements Listener {
                 }
                 if (wastelandPlayer.getTeam().getChestLocation().equals(event.getClickedBlock().getLocation())) {
                     wastelandPlayer.getTeam().addWheat(wastelandPlayer.getWheat());
+                    player.playSound(player.getLocation(),Sound.BLOCK_COMPARATOR_CLICK,1,1);
                     wastelandPlayer.setWheat(0);
                     event.setCancelled(true);
                 }
