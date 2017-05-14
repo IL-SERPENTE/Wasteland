@@ -8,6 +8,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -49,6 +50,12 @@ public class CancelledEvent implements Listener {
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event){
         if(!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CUSTOM))
+            event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event){
+        if(!wasteland.isGameStarted() || event.getBlock().getType().equals(Material.CROPS))
             event.setCancelled(true);
     }
 
