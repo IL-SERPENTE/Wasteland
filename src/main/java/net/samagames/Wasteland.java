@@ -77,13 +77,6 @@ public class Wasteland extends Game<WastelandPlayer> {
 
     }
     @Override
-    public void handleGameEnd(){
-        super.handleGameEnd();
-        getInstance().setStatus(Status.FINISHED);
-
-    }
-
-    @Override
     public void startGame() {
         super.startGame();
 
@@ -163,8 +156,8 @@ public class Wasteland extends Game<WastelandPlayer> {
                 boolean areEmptyBlock = false;
                 for (Location location : locations)
                     if(!location.getBlock().getType().equals(Material.SOIL) && !location.add(0,1,0).getBlock().getType().equals(Material.WHEAT)){
-                    areEmptyBlock = true;
-                    break;
+                        areEmptyBlock = true;
+                        break;
                     }
                 if(!areEmptyBlock)
                     return;
@@ -200,7 +193,6 @@ public class Wasteland extends Game<WastelandPlayer> {
                 }
                 if(minutes == 15) {
                     this.cancel();
-                    handleGameEnd();
                 }
             }
         };
@@ -223,7 +215,7 @@ public class Wasteland extends Game<WastelandPlayer> {
         if (teamRed.getMember().size() >= teamBlue.getMember().size() && teamBlue.getMember().size() - teamRed.getMember().size() != 2) {
             if (teamRed.contains(player)) teamRed.removePlayer(player);
             teamBlue.addPlayer(player);
-            player.sendMessage("Vous avez rejoint la team bleue");
+            player.sendMessage(ChatColor.YELLOW + "Vous avez rejoint la team " + ChatColor.BLUE + "bleue");
 
         } else
             player.sendMessage(ChatColor.RED + "Il y a trop de joueur dans cette équipe");
@@ -237,13 +229,15 @@ public class Wasteland extends Game<WastelandPlayer> {
         if (teamRed.getMember().size() <= teamBlue.getMember().size() && teamRed.getMember().size() - teamBlue.getMember().size() != 2) {
             if (teamBlue.contains(player)) teamBlue.removePlayer(player);
             teamRed.addPlayer(player);
-            player.sendMessage("Vous avez rejoint la team rouge");
+            player.sendMessage(ChatColor.YELLOW + "Vous avez rejoint la team " + ChatColor.RED + "rouge");
         } else
             player.sendMessage(ChatColor.RED + "Il y a trop de joueur dans cette équipe");
     }
 
 
-    public void playEffect(Team team, PlantType plantType){
+    public void playEffect(Player sender,Team team, PlantType plantType){
+        if(!plantType.isBonus())
+            sender.sendMessage("Vous avez inflligé " + plantType.getPotionEffect().getDuration()/20 + " de " + plantType.getPotionEffect().getType().getName()  );
         for(Player player : team.getMember()) {
             player.addPotionEffect(plantType.getPotionEffect());
             player.sendMessage("Vous avez reçu " + plantType.getPotionEffect().getDuration()/20 + " de " + plantType.getPotionEffect().getType().getName() +  " au niveau " + plantType.getPotionEffect().getAmplifier());
