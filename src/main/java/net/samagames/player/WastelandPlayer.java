@@ -115,7 +115,7 @@ public class WastelandPlayer extends GamePlayer {
         Inventory inventory = Bukkit.createInventory(null, InventoryType.PLAYER, "Séléctionnez votre kit");
         for(WastelandItem wastelandItem : WastelandItem.values()) {
             if(wastelandItem.getItemStack().getType().equals(Material.BANNER)){
-                return;
+                continue;
             }
             if (!wastelandItem.isStarterItem())
                 inventory.setItem(wastelandItem.getSlot(), wastelandItem.getItemStack());
