@@ -3,8 +3,6 @@ package net.samagames.player;
 import net.samagames.Wasteland;
 import net.samagames.entity.Turret;
 import net.samagames.tools.scoreboards.ObjectiveSign;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

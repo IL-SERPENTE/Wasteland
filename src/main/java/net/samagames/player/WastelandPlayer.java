@@ -5,7 +5,6 @@ import net.samagames.WastelandItem;
 import net.samagames.api.games.GamePlayer;
 import net.samagames.tools.scoreboards.ObjectiveSign;
 import org.bukkit.*;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
