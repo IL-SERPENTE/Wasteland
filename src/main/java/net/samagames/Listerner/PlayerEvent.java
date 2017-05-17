@@ -64,7 +64,6 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerPickupItem(PlayerPickupItemEvent event) {
-
         if(!wasteland.hasPlayer(event.getPlayer()) )
             return;
         if (event.getItem().getItemStack().getType().equals(Material.WHEAT)) {
@@ -85,8 +84,8 @@ public class PlayerEvent implements Listener {
                     player.playSound(player.getLocation(),Sound.ITEM_HOE_TILL,(float) 0.5,(float) 0.5);
                 }
             }
-        }else if(event.getItem().getType().equals(Material.RED_ROSE) || event.getItem().getType().equals(Material.DOUBLE_PLANT))
-           ActionBarAPI.sendMessage(event.getPlayer(),ChatColor.YELLOW + "Vous avez rammsé une plant.");
+         }else if(event.getItem().getItemStack().getType().equals(Material.RED_ROSE) || event.getItem().getItemStack().getType().equals(Material.DOUBLE_PLANT))
+           ActionBarAPI.sendMessage(event.getPlayer(),ChatColor.YELLOW + "Vous avez rammasé une plant.");
     }
 
     @EventHandler
