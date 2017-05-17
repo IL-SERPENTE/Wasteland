@@ -36,17 +36,19 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerItemHeld(PlayerItemHeldEvent event){
-        if(!wasteland.hasPlayer(event.getPlayer()) || !wasteland.isGameStarted() || wasteland.getStatus().equals(Status.FINISHED))
+        if(!wasteland.hasPlayer(event.getPlayer()) || wasteland.isGameStarted())
             return;
         Player player = event.getPlayer();
-        if(player.getInventory().getItem(event.getNewSlot()) == null)
-            ActionBarAPI.removeMessage(player,true);
+        if(player.getInventory().getItem(event.getNewSlot()) == null) {
+            ActionBarAPI.removeMessage(player, true);
+            return;
+        }
         ActionBarAPI.sendPermanentMessage(event.getPlayer(),player.getInventory().getItem(event.getNewSlot()).getItemMeta().getDisplayName());
     }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
-        if(!wasteland.hasPlayer(event.getPlayer()) || !wasteland.isGameStarted() || wasteland.getStatus().equals(Status.FINISHED))
+        if(!wasteland.hasPlayer(event.getPlayer()) || !wasteland.isGameStarted() )
             return;
         if(event.getBlock().getType().equals(Material.CROPS) && event.getPlayer() != null){
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(event.getPlayer());
@@ -55,13 +57,15 @@ public class PlayerEvent implements Listener {
                 wastelandPlayer.addWheat(1);
                 event.getPlayer().playSound(event.getPlayer().getLocation(),Sound.ITEM_HOE_TILL,(float) 0.5,(float) 0.5);
                 event.getBlock().setType(Material.AIR);
+                wasteland.addLocation(event.getBlock().getLocation());
             }
         }
     }
 
     @EventHandler
     public void onPlayerPickupItem(PlayerPickupItemEvent event) {
-        if(!wasteland.hasPlayer(event.getPlayer()) || wasteland.getStatus().equals(Status.FINISHED))
+
+        if(!wasteland.hasPlayer(event.getPlayer()) )
             return;
         if (event.getItem().getItemStack().getType().equals(Material.WHEAT)) {
             event.setCancelled(true);
@@ -82,17 +86,12 @@ public class PlayerEvent implements Listener {
                 }
             }
         }else if(event.getItem().getType().equals(Material.RED_ROSE) || event.getItem().getType().equals(Material.DOUBLE_PLANT))
-            for (ItemStack itemStack : event.getPlayer().getInventory().getContents())
-                if (itemStack.getItemMeta().getDisplayName().equals(event.getItem().getName())) {
-                    event.setCancelled(true);
-                    event.getPlayer().sendMessage(ChatColor.RED + "Vous avez déjà cette fleur dans votre inventaire. Utilisez la pour pouvoir la rammaser");
-                    break;
-                }
+           ActionBarAPI.sendMessage(event.getPlayer(),ChatColor.YELLOW + "Vous avez rammsé une plant.");
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event){
-        if(event.getCurrentItem().getType().equals(Material.AIR) || wasteland.getStatus().equals(Status.FINISHED))
+        if(event.getCurrentItem() == null && event.getCurrentItem().getType().equals(Material.AIR))
             return;
         if(!wasteland.isGameStarted()) {
             event.setCancelled(true);
@@ -146,7 +145,7 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event){
-        if(!wasteland.hasPlayer(event.getPlayer()) || wasteland.getStatus().equals(Status.FINISHED))
+        if(!wasteland.hasPlayer(event.getPlayer()) )
             return;
         Player player = event.getPlayer();
         WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
@@ -155,7 +154,7 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event){
-        if(!wasteland.hasPlayer(event.getEntity()) || wasteland.getStatus().equals(Status.FINISHED))
+        if(!wasteland.hasPlayer(event.getEntity()))
             return;
         if(event.getEntity() instanceof Player) {
             Player player = event.getEntity();
@@ -171,9 +170,9 @@ public class PlayerEvent implements Listener {
             }else
                 if(new Random().nextInt(wastelandPlayer.getAmplifier()) == 3)
                     new Plant(event.getEntity().getLocation()).spawn();
-            event.setDeathMessage(ChatColor.GRAY + player.getName() + ChatColor.YELLOW + " a été tué par " + ChatColor.YELLOW + event.getEntity().getKiller().getName());
+            event.setDeathMessage(ChatColor.GRAY + player.getName() + ChatColor.YELLOW + " a été tué par " + ChatColor.GRAY + event.getEntity().getKiller().getName());
             if(wastelandPlayer.getWheat() > 0){
-                event.setDeathMessage(event.getDeathMessage() + ChatColor.YELLOW + "droppant " +ChatColor.GRAY + wastelandPlayer.getWheat());
+                event.setDeathMessage(event.getDeathMessage() + ChatColor.YELLOW + " droppant " +ChatColor.GRAY + wastelandPlayer.getWheat() + " blées");
                 event.getDrops().clear();
                 event.getEntity().getWorld().dropItem(event.getEntity().getLocation(),new ItemStack(Material.WHEAT,wastelandPlayer.getWheat()));
                 wastelandPlayer.setWheat(0);
@@ -184,8 +183,10 @@ public class PlayerEvent implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event){
-        if(!wasteland.hasPlayer(event.getPlayer()) || wasteland.getStatus().equals(Status.FINISHED))
+        if(!wasteland.hasPlayer(event.getPlayer()))
             return;
+        if(!wasteland.isGameStarted())
+            event.setCancelled(true);
         Player player = event.getPlayer();
         WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
 
@@ -195,11 +196,12 @@ public class PlayerEvent implements Listener {
                 for(PlantType plantType : PlantType.values())
                     if(plantType.getItemStack().equals(event.getItem())) {
                         if(plantType.isBonus())
-                            wasteland.playEffect(wastelandPlayer.getTeam(),plantType);
+                            wasteland.playEffect(player,wastelandPlayer.getTeam(),plantType);
                         else
-                            wasteland.playEffect(wastelandPlayer.getTeam().getEnnemies(), plantType);
+                            wasteland.playEffect(player,wastelandPlayer.getTeam().getEnnemies(), plantType);
                         break;
                 }
+                event.getItem().setAmount(event.getItem().getAmount() - 1);
                 player.getInventory().removeItem(event.getItem());
             }
 

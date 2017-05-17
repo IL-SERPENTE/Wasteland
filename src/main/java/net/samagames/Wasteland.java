@@ -31,6 +31,8 @@ public class Wasteland extends Game<WastelandPlayer> {
     private WastelandMain wastelandMain;
     private Location spawn;
     private BukkitRunnable timerRunnable;
+    private ArrayList<Location> locations = new ArrayList<>();
+
 
     public Wasteland(String gameCodeName, String gameName, String gameDescription, Class gamePlayerClass, WastelandMain main) {
         super(gameCodeName, gameName, gameDescription, gamePlayerClass);
@@ -143,29 +145,20 @@ public class Wasteland extends Game<WastelandPlayer> {
         int minX = min.getBlockX();
         int minY = min.getBlockY();
         int minZ = min.getBlockZ();
-        ArrayList<Location> locations = new ArrayList<>();
         for(int x = minX; x <= maxX; x++)
             for(int z = minZ; z <= maxZ; z++)
-                for(int y = minY; y <= maxY; y++)
-                    locations.add(new Location(Bukkit.getWorld("world"),x,y,z));
-
+                for(int y = minY; y <= maxY; y++) {
+                    Location location = new Location(Bukkit.getWorld("world"),x,y,z);
+                    if(location.getBlock().getType().equals(Material.SOIL) && location.add(0,1,0).getBlock().getType().equals(Material.AIR))
+                        locations.add(location);
+                }
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                boolean areEmptyBlock = false;
-                for (Location location : locations)
-                    if(!location.getBlock().getType().equals(Material.SOIL) && !location.add(0,1,0).getBlock().getType().equals(Material.WHEAT)){
-                        areEmptyBlock = true;
-                        break;
-                    }
-                if(!areEmptyBlock)
-                    return;
-                Location location = new Location(Bukkit.getWorld("world"),0,0,0);
-                while (!location.getBlock().getType().equals(Material.SOIL) && !location.add(0,1,0).getBlock().getType().equals(Material.WHEAT))
-                    location = locations.get(new Random().nextInt(locations.size()));
-                location.add(0,1,0).getBlock().setType(Material.CROPS);
-                location.add(0,1,0).getBlock().setData((byte) 7);
+                Location location = locations.get(new Random().nextInt(locations.size()));
+                location.getBlock().setType(Material.CROPS);
+                locations.remove(location);
             }
         }.runTaskTimer(getMain(), 20, 6);
     }
@@ -205,6 +198,10 @@ public class Wasteland extends Game<WastelandPlayer> {
 
     public Team getTeamBlue() {
         return teamBlue;
+    }
+
+    public void addLocation (Location location){
+        this.locations.add(location);
     }
 
     public void setTeamBlue(Player player) {
