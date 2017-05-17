@@ -194,15 +194,16 @@ public class PlayerEvent implements Listener {
         if(wasteland.isGameStarted() && event.hasItem())
             if(event.getItem().getType().equals(Material.DOUBLE_PLANT) || event.getItem().getType().equals(Material.RED_ROSE)){
                 for(PlantType plantType : PlantType.values())
-                    if(plantType.getItemStack().equals(event.getItem())) {
+                    if(plantType.getItemStack().getItemMeta().equals(event.getItem().getItemMeta())) {
                         if(plantType.isBonus())
                             wasteland.playEffect(player,wastelandPlayer.getTeam(),plantType);
                         else
                             wasteland.playEffect(player,wastelandPlayer.getTeam().getEnnemies(), plantType);
                         break;
                 }
+                if (event.getItem().getAmount() == 1)
+                    player.getInventory().remove(event.getItem());
                 event.getItem().setAmount(event.getItem().getAmount() - 1);
-                player.getInventory().removeItem(event.getItem());
             }
 
         // Harvest
