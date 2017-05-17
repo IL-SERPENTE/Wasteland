@@ -55,7 +55,7 @@ public class CancelledEvent implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
-        if(!wasteland.isGameStarted() || event.getBlock().getType().equals(Material.CROPS))
+        if(!wasteland.isGameStarted() || event.getBlock().getType().equals(Material.SOIL))
             event.setCancelled(true);
     }
 
