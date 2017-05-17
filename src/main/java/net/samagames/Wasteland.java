@@ -283,7 +283,7 @@ public class Wasteland extends Game<WastelandPlayer> {
     }
 
     public void registerPlayer(Player player){
-        registeredPlayer.put(player, new WastelandPlayer(player));
+        registeredPlayer.put(player, new WastelandPlayer(player,this));
     }
 
     public Location getSpawn(){

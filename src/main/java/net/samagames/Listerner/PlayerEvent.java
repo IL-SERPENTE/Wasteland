@@ -107,10 +107,12 @@ public class PlayerEvent implements Listener {
                 }
                 if(item.equals(WastelandItem.JOIN_TEAM_BLUE.getItemStack())) {
                     wasteland.setTeamBlue(player);
+                    wastelandPlayer.setBannerColor(DyeColor.BLUE);
                     return;
                 }
                 if(item.equals(WastelandItem.JOIN_TEAM_RED.getItemStack())) {
                     wasteland.setTeamRed(player);
+                    wastelandPlayer.setBannerColor(DyeColor.RED);
                     return;
                 }
                 if(item.equals(WastelandItem.KIT_SELECTOR.getItemStack())){

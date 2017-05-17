@@ -1,16 +1,16 @@
 package net.samagames.player;
 
+import net.samagames.Wasteland;
 import net.samagames.WastelandItem;
 import net.samagames.api.games.GamePlayer;
 import net.samagames.tools.scoreboards.ObjectiveSign;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 
 /**
  * Created by werter on 21.03.2017.
@@ -18,6 +18,7 @@ import org.bukkit.inventory.Inventory;
 public class WastelandPlayer extends GamePlayer {
 
     private Player player;
+    private Wasteland wasteland;
     private float walkSpeed;
     private ObjectiveSign scoreBoard;
     private Team team;
@@ -25,9 +26,10 @@ public class WastelandPlayer extends GamePlayer {
     private int wheat;
     private int amplifier;
 
-    public WastelandPlayer(Player player){
+    public WastelandPlayer(Player player,Wasteland wasteland){
         super(player);
         this.player = player;
+        this.wasteland = wasteland;
         this.walkSpeed = player.getWalkSpeed();
     }
 
@@ -150,6 +152,16 @@ public class WastelandPlayer extends GamePlayer {
         setWheat(wheat + number);
         updateScoreBoard();
 
+    }
+
+    public void setBannerColor(DyeColor dyeColor){
+        if(!wasteland.isGameStarted()){
+            ItemStack itemStack = player.getInventory().getItem(0);
+            BannerMeta bannerMeta = (BannerMeta) itemStack.getItemMeta();
+            bannerMeta.setBaseColor(dyeColor);
+            itemStack.setItemMeta(bannerMeta);
+            player.getInventory().setItem(0,itemStack);
+        }
     }
 
 }
