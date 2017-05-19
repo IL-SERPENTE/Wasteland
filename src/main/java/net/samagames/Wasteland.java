@@ -156,9 +156,11 @@ public class Wasteland extends Game<WastelandPlayer> {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Location location = locations.get(new Random().nextInt(locations.size()));
-                location.getBlock().setType(Material.CROPS);
-                locations.remove(location);
+                if(locations != null && !locations.isEmpty()) {
+                    Location location = locations.get(new Random().nextInt(locations.size()));
+                    location.getBlock().setType(Material.CROPS);
+                    locations.remove(location);
+                }
             }
         }.runTaskTimer(getMain(), 20, 6);
     }
