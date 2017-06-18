@@ -9,8 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by werter on 21.03.2017.
@@ -23,7 +22,7 @@ public class Turret implements Listener{
     private Team team;
     private Location location;
     private int range;
-    private HashMap<Player,Integer> playerInTurret = new HashMap<>();
+    private int capture;
 
     public Turret(){}
 
@@ -33,6 +32,7 @@ public class Turret implements Listener{
         this.locations = locations;
         this.location = location;
         this.range = range;
+        this.capture = 0;
     }
 
 
@@ -62,28 +62,23 @@ public class Turret implements Listener{
         new BukkitRunnable() {
             @Override
             public void run() {
-                for(Player player : Bukkit.getOnlinePlayers()) {
-                    if(getEnnemiesInTurret() < getTeamInTurret()){
-                        playerInTurret.forEach((k,v)->playerInTurret.remove(k));
-                        break;
+                if(getEnnemiesInTurret() == 0 || getEnnemiesInTurret() <= getTeamInTurret())
+                    capture = 0;
+                else{
+                    if(capture == 0)
+                        for(Player player : getPlayerInTurret())
+                            if(wasteland.getWastelandPlayer(player).getTeam() != team)
+                                player.sendMessage("Restez encore 10 secondes pour capturer l'avant-garde");
+                    capture++;
+                    if(capture == 10) {
+                        team = team.getEnnemies();
+                        capture = 0;
+                        for (Player player : getPlayerInTurret())
+                                if (wasteland.getWastelandPlayer(player).getTeam() == team){
+                                    player.playSound(player.getLocation(),Sound.ENTITY_PLAYER_LEVELUP,1,1);
+                                    player.sendMessage("Vous avez capturé l'avant garde");
+                                }
                     }
-                    WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
-                    if (!wastelandPlayer.getTeam().equals(team) && location.distance(player.getLocation()) <= range) {
-                        if(playerInTurret.get(player) != null && playerInTurret.get(player) == 10) {
-                            team = wastelandPlayer.getTeam();
-                            player.playSound(player.getLocation(),Sound.ENTITY_PLAYER_LEVELUP,1,1);
-                            player.sendMessage("Vous avez capturé l'avant garde");
-                            playerInTurret.remove(player);
-                            return;
-                        }
-                        if (playerInTurret.containsKey(player))
-                            playerInTurret.put(player, playerInTurret.get(player) + 1);
-                        else
-                            playerInTurret.put(player, 1);
-                        if(playerInTurret.get(player) == 1)
-                            player.sendMessage(ChatColor.BLUE + "[Avant-Garde]" + ChatColor.YELLOW + "Restez encore 10 secondes dans le perimetre de l'avant garde pour le capturer");
-                    }else
-                        playerInTurret.remove(player);
                 }
             }
         }.runTaskTimer(wasteland.getMain(),20,20);
@@ -97,24 +92,32 @@ public class Turret implements Listener{
         }
     }
 
+    public ArrayList<Player> getPlayerInTurret(){
+        ArrayList<Player> players = new ArrayList<>();
+        for (Player player : Bukkit.getOnlinePlayers())
+            if (player.getLocation().distance(location) <= range)
+                players.add(player);
+        return players;
+    }
+
     public int getTeamInTurret(){
-        int playerIntTurret = 0;
+        int playerInTurret = 0;
         for(Player player : Bukkit.getOnlinePlayers()){
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
             if(wastelandPlayer.getTeam() == this.team && player.getLocation().distance(this.location) <= range)
-                playerIntTurret++;
+                playerInTurret++;
         }
-        return playerIntTurret;
+        return playerInTurret;
     }
 
     public int getEnnemiesInTurret(){
-        int playerIntTurret = 0;
+        int playerInTurret = 0;
         for(Player player : Bukkit.getOnlinePlayers()){
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
             if(wastelandPlayer.getTeam() != this.team && player.getLocation().distance(this.location) <= range)
-                playerIntTurret++;
+                playerInTurret++;
         }
-        return playerIntTurret;
+        return playerInTurret;
     }
 
     public void disable(){
