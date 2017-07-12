@@ -51,13 +51,13 @@ public class PlayerEvent implements Listener {
             return;
         if(event.getBlock().getType().equals(Material.CROPS) && event.getPlayer() != null){
             WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(event.getPlayer());
-		if(wastelandPlayer.getTeam() == null) return;
+            if(wastelandPlayer.getTeam() == null) return;
             if(!(wastelandPlayer.getWheat() == 50)){
                 wastelandPlayer.addWheat(1);
                 event.getPlayer().playSound(event.getPlayer().getLocation(),Sound.ITEM_HOE_TILL,(float) 0.5,(float) 0.5);
-                event.getBlock().setType(Material.AIR);
                 wasteland.addLocation(event.getBlock().getLocation());
             }
+            event.getBlock().setType(Material.AIR);
         }
     }
 
@@ -83,8 +83,8 @@ public class PlayerEvent implements Listener {
                     player.playSound(player.getLocation(),Sound.ITEM_HOE_TILL,(float) 0.5,(float) 0.5);
                 }
             }
-         }else if(event.getItem().getItemStack().getType().equals(Material.RED_ROSE) || event.getItem().getItemStack().getType().equals(Material.DOUBLE_PLANT))
-           ActionBarAPI.sendMessage(event.getPlayer(),ChatColor.YELLOW + "Vous avez rammasé une plant.");
+        }else if(event.getItem().getItemStack().getType().equals(Material.RED_ROSE) || event.getItem().getItemStack().getType().equals(Material.DOUBLE_PLANT))
+            ActionBarAPI.sendMessage(event.getPlayer(),ChatColor.YELLOW + "Vous avez rammasé une plant.");
     }
 
     @EventHandler
@@ -93,52 +93,52 @@ public class PlayerEvent implements Listener {
             return;
         if(!wasteland.isGameStarted()) {
             event.setCancelled(true);
-                Player player = (Player) event.getWhoClicked();
-                WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
-                player.closeInventory();
-                ItemStack item = event.getCurrentItem();
-                if(player.getInventory().getItem(0).equals(item)){
-                    Inventory inventory = Bukkit.createInventory(null, InventoryType.HOPPER, item.getItemMeta().getDisplayName());
-                    inventory.setItem(WastelandItem.JOIN_TEAM_BLUE.getSlot(),WastelandItem.JOIN_TEAM_BLUE.getItemStack());
-                    inventory.setItem(WastelandItem.JOIN_TEAM_RED.getSlot(),WastelandItem.JOIN_TEAM_RED.getItemStack());
-                    player.openInventory(inventory);
+            Player player = (Player) event.getWhoClicked();
+            WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
+            player.closeInventory();
+            ItemStack item = event.getCurrentItem();
+            if(player.getInventory().getItem(0).equals(item)){
+                Inventory inventory = Bukkit.createInventory(null, InventoryType.HOPPER, item.getItemMeta().getDisplayName());
+                inventory.setItem(WastelandItem.JOIN_TEAM_BLUE.getSlot(),WastelandItem.JOIN_TEAM_BLUE.getItemStack());
+                inventory.setItem(WastelandItem.JOIN_TEAM_RED.getSlot(),WastelandItem.JOIN_TEAM_RED.getItemStack());
+                player.openInventory(inventory);
 
-                }
-                if(item.equals(WastelandItem.JOIN_TEAM_BLUE.getItemStack())) {
-                    wasteland.setTeamBlue(player);
-                    wastelandPlayer.setBannerColor(DyeColor.BLUE);
-                    return;
-                }
-                if(item.equals(WastelandItem.JOIN_TEAM_RED.getItemStack())) {
-                    wasteland.setTeamRed(player);
-                    wastelandPlayer.setBannerColor(DyeColor.RED);
-                    return;
-                }
-                if(item.equals(WastelandItem.KIT_SELECTOR.getItemStack())){
-                    wastelandPlayer.openKitSelector();
-                    return;
-                }
-                if(item.equals(WastelandItem.CHOOSE_KIT_DEFENDER.getItemStack())){
-                    wastelandPlayer.setKit(wasteland.getKitDefender(),true);
-                    return;
-                }
-                if(item.equals(WastelandItem.CHOOSE_KIT_DEMOLISHER.getItemStack())) {
-                    wastelandPlayer.setKit(wasteland.getKitDemolisher(),true);
-                    return;
+            }
+            if(item.equals(WastelandItem.JOIN_TEAM_BLUE.getItemStack())) {
+                wasteland.setTeamBlue(player);
+                wastelandPlayer.setBannerColor(DyeColor.BLUE);
+                return;
+            }
+            if(item.equals(WastelandItem.JOIN_TEAM_RED.getItemStack())) {
+                wasteland.setTeamRed(player);
+                wastelandPlayer.setBannerColor(DyeColor.RED);
+                return;
+            }
+            if(item.equals(WastelandItem.KIT_SELECTOR.getItemStack())){
+                wastelandPlayer.openKitSelector();
+                return;
+            }
+            if(item.equals(WastelandItem.CHOOSE_KIT_DEFENDER.getItemStack())){
+                wastelandPlayer.setKit(wasteland.getKitDefender(),true);
+                return;
+            }
+            if(item.equals(WastelandItem.CHOOSE_KIT_DEMOLISHER.getItemStack())) {
+                wastelandPlayer.setKit(wasteland.getKitDemolisher(),true);
+                return;
 
-                }
-                if(item.equals(WastelandItem.CHOOSE_KIT_HERBALIST.getItemStack())) {
-                    wastelandPlayer.setKit(wasteland.getKitHerbelist(),true);
-                    return;
-                }
-                if(item.equals(WastelandItem.CHOOSE_KIT_ROBBER.getItemStack())) {
-                    wastelandPlayer.setKit(wasteland.getKitRobber(),true);
-                    return;
-                }
-                if(item.equals(WastelandItem.CHOOSE_KIT_TRAPPER.getItemStack())) {
-                    wastelandPlayer.setKit(wasteland.getKitTrapper(),true);
-                    return;
-                }
+            }
+            if(item.equals(WastelandItem.CHOOSE_KIT_HERBALIST.getItemStack())) {
+                wastelandPlayer.setKit(wasteland.getKitHerbelist(),true);
+                return;
+            }
+            if(item.equals(WastelandItem.CHOOSE_KIT_ROBBER.getItemStack())) {
+                wastelandPlayer.setKit(wasteland.getKitRobber(),true);
+                return;
+            }
+            if(item.equals(WastelandItem.CHOOSE_KIT_TRAPPER.getItemStack())) {
+                wastelandPlayer.setKit(wasteland.getKitTrapper(),true);
+                return;
+            }
         }
     }
 
@@ -168,8 +168,8 @@ public class PlayerEvent implements Listener {
                 if (new Random().nextInt(50) == 3)
                     new Plant(event.getEntity().getLocation()).spawn();
             }else
-                if(new Random().nextInt(wastelandPlayer.getAmplifier()) == 3)
-                    new Plant(event.getEntity().getLocation()).spawn();
+            if(new Random().nextInt(wastelandPlayer.getAmplifier()) == 3)
+                new Plant(event.getEntity().getLocation()).spawn();
             event.setDeathMessage(ChatColor.GRAY + player.getName() + ChatColor.YELLOW + " a été tué par " + ChatColor.GRAY + event.getEntity().getKiller().getName());
             if(wastelandPlayer.getWheat() > 0){
                 event.setDeathMessage(event.getDeathMessage() + ChatColor.YELLOW + " droppant " +ChatColor.GRAY + wastelandPlayer.getWheat() + " blées");
@@ -200,7 +200,7 @@ public class PlayerEvent implements Listener {
                         else
                             wasteland.playEffect(player,wastelandPlayer.getTeam().getEnnemies(), plantType);
                         break;
-                }
+                    }
                 if (event.getItem().getAmount() == 1)
                     player.getInventory().remove(event.getItem());
                 event.getItem().setAmount(event.getItem().getAmount() - 1);
@@ -214,6 +214,8 @@ public class PlayerEvent implements Listener {
                     if(wastelandPlayer.getTeam().getEnnemies().getWheat() < 16){
                         player.sendMessage("L'équipe adverse n'as pas assez de ressources pour être volé");
                         return;
+
+
                     }
                     if(wastelandPlayer.getWheat() == 50){
                         player.sendMessage("Vous ne pouvez pas voler de ressource car vous êtes full");
@@ -221,7 +223,7 @@ public class PlayerEvent implements Listener {
                     }
                     if(player.getWalkSpeed() == 0) return;
                     ActionBarAPI.sendMessage(player,"Vous avez volé " + ChatColor.MAGIC + "15" + ChatColor.RESET + " blés");
-
+                    player.setWalkSpeed(0);
                     new BukkitRunnable(){
                         @Override
                         public void run() {
@@ -249,7 +251,7 @@ public class PlayerEvent implements Listener {
                 }
             }
 
-            //team ands kit selector
+        //team ands kit selector
         if(!wasteland.isGameStarted() && event.hasItem()){
             event.setCancelled(true);
             ItemStack item = event.getItem();

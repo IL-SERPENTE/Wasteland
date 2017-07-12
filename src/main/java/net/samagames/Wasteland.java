@@ -16,7 +16,6 @@ import net.samagames.tools.scoreboards.ObjectiveSign;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import java.util.*;
 
 /**
@@ -73,7 +72,7 @@ public class Wasteland extends Game<WastelandPlayer> {
             if (item.isStarterItem()) {
                 player.getInventory().setItem(item.getSlot(), item.getItemStack());
             }
-            getWastelandPlayer(player).setKit(getKitDefault(),false);
+        getWastelandPlayer(player).setKit(getKitDefault(),false);
         if (Bukkit.getOnlinePlayers().size() >= 8 && !this.isGameStarted())
             startGame();
 
@@ -273,7 +272,7 @@ public class Wasteland extends Game<WastelandPlayer> {
     }
 
     public Wasteland getInstance(){
-	return this;
+        return this;
     }
 
     public WastelandPlayer getWastelandPlayer(Player player){

@@ -61,14 +61,14 @@ public class WastelandPlayer extends GamePlayer {
     }
 
     public boolean hasTeam(){
-       return team != null;
+        return team != null;
     }
 
     public void setKit(Kit kit,boolean sendMessage){
-         this.kit = kit;
-         if(sendMessage)
+        this.kit = kit;
+        if(sendMessage)
             player.sendMessage(ChatColor.YELLOW + "Tu as pris le kit: " + ChatColor.GRAY + kit.getName());
-         //TODO WITH SHOP IDs
+        //TODO WITH SHOP IDs
 
         if(kit.equals(Kit.DEFENDER)) {
             this.amplifier = 6;
@@ -125,7 +125,7 @@ public class WastelandPlayer extends GamePlayer {
     }
 
     public void updateScoreBoard(){
-	if(this.team == null) return;
+        if(this.team == null) return;
         if(player.getScoreboard() != null) {
             getScoreBoard().setLine(6, "Sur vous :" + getWheat());
             getScoreBoard().updateLines();
@@ -133,7 +133,7 @@ public class WastelandPlayer extends GamePlayer {
     }
 
     public void setWheat(int wheat) {
-	if(this.team == null) return;
+        if(this.team == null) return;
         this.wheat = wheat;
 
         updateScoreBoard();
@@ -147,14 +147,14 @@ public class WastelandPlayer extends GamePlayer {
     }
 
     public void addWheat(int number){
-	if(this.team == null) return;
+        if(this.team == null) return;
         setWheat(wheat + number);
         updateScoreBoard();
 
     }
 
     public void setBannerColor(DyeColor dyeColor){
-        if(!wasteland.isGameStarted()){
+        if(!wasteland.isGameStarted() && hasTeam()){
             ItemStack itemStack = player.getInventory().getItem(0);
             BannerMeta bannerMeta = (BannerMeta) itemStack.getItemMeta();
             bannerMeta.setBaseColor(dyeColor);

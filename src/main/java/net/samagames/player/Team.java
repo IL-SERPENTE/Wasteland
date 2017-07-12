@@ -43,23 +43,23 @@ public class Team {
 
     public void initGame(){
         if(!this.member.isEmpty())
-        for(Player player : this.member) {
-            WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
-            wastelandPlayer.setScoreBoard(wastelandPlayer.getTeam().getScoreBoard());
-            ObjectiveSign objectiveSign = wastelandPlayer.getScoreBoard();
-            objectiveSign.setLine(0, " ");
-            objectiveSign.setLine(1,"Équipe: " + teamColor.getChatColor() + teamColor.getName());
-            objectiveSign.setLine(2,"  ");
-            objectiveSign.setLine(3,"Nombre de blés");
-            objectiveSign.setLine(5, "   ");
-            objectiveSign.setLine(6,"Sur vous : " + wastelandPlayer.getWheat());
-            objectiveSign.setLine(7,"Votre coffre : " + wastelandPlayer.getTeam().getWheat());
-            objectiveSign.setLine(8, "L'équipe adverse: " + wastelandPlayer.getTeam().getEnnemies().getWheat());
-            objectiveSign.setLine(9, "      ");
-            objectiveSign.setLine(10, "00:00");
-            objectiveSign.addReceiver(player);
-            wastelandPlayer.getKit().equip(wastelandPlayer);
-        }
+            for(Player player : this.member) {
+                WastelandPlayer wastelandPlayer = wasteland.getWastelandPlayer(player);
+                wastelandPlayer.setScoreBoard(wastelandPlayer.getTeam().getScoreBoard());
+                ObjectiveSign objectiveSign = wastelandPlayer.getScoreBoard();
+                objectiveSign.setLine(0, " ");
+                objectiveSign.setLine(1,"Équipe: " + teamColor.getChatColor() + teamColor.getName());
+                objectiveSign.setLine(2,"  ");
+                objectiveSign.setLine(3,"Nombre de blés");
+                objectiveSign.setLine(5, "   ");
+                objectiveSign.setLine(6,"Sur vous : " + wastelandPlayer.getWheat());
+                objectiveSign.setLine(7,"Votre coffre : " + wastelandPlayer.getTeam().getWheat());
+                objectiveSign.setLine(8, "L'équipe adverse: " + wastelandPlayer.getTeam().getEnnemies().getWheat());
+                objectiveSign.setLine(9, "      ");
+                objectiveSign.setLine(10, "00:00");
+                objectiveSign.addReceiver(player);
+                wastelandPlayer.getKit().equip(wastelandPlayer);
+            }
     }
 
     public void setEnnemies(Team ennemies) {
@@ -119,7 +119,7 @@ public class Team {
             if(team.getPlayers().contains(player)) {
                 team.setPrefix(teamColor.getChatColor() + "[Équipe" + teamColor.getName() + "] ");
                 break;
-        }
+            }
         player.setPlayerListName(this.getTeamColor().getChatColor() + player.getName());
         wasteland.getWastelandPlayer(player).setTeam(this);
     }
