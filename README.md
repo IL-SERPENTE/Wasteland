@@ -13,7 +13,7 @@ Pour plus de détails, référez-vous au texte de licence disponible [ici](LICEN
 - Type : Mini-Jeu
 - État : Non terminé
 - Développeur(s) : Werter
-- CDC (Si existant) : 
+- CDC (Si existant) : [Wasteland](https://samagames.net/ressources/wasteland.pdf)
 
 ## Description
 Wasteland est un projet dans lequel deux équipes s'affrontent afin de récolter le plus de blé.
